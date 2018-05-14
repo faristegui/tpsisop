@@ -1,9 +1,58 @@
 parametro=$1
 
-if [ "$parametro" = "-r" ]
-then
+log() {
+    echo [$(date "+%Y-%m-%d %H:%M")] "$@" >> "logFile.log"
+}
+
+crearDirectorios()
+{
+	command clear
+	echo -e "Creando directorios de instalación...\n"
+	mkdir "dirconfig"
+	log "CreadoDirectorio-dirconfig"
+	echo -e "Creando directorios de configuración...\n"
+	mkdir "InstallFiles"
+	log "CreadoDirectorio-InstallFiles-Backup"
+	echo -e "Creando directorios de backup...\n"
+	mkdir $dirEjecutables
+	log "CreadoDirectorioEjecutables-$dirEjecutables"
+	echo -e "Creando directorios de ejecutables...\n"
+	mkdir $dirMaestros
+	log "CreadoDirectorio-ArchivosMaestros-$dirMaestros"
+	echo -e "Creando directorios de archivos maestros...\n"
+	mkdir $dirEntrada
+	log "CreadoDirectorio-ArchivosDeEntrada-$dirEntrada"
+	echo -e "Creando directorios de archivos de entrada...\n"
+	mkdir $dirNovedadesAceptadas
+	log "CreadoDirectorio-ArchivoDeNovedadesAceptadas-$dirNovedadesAceptadas"
+	echo -e "Creando directorios de archivos de novedades aceptadas...\n"
+	mkdir $dirRechazados
+	log "CreadoDirectorio-ArchivosRechazados-$dirRechazados"
+	echo -e "Creando directorios de archivos rechazados...\n"
+	mkdir $dirProcesados
+	log "CreadoDirectorio-ArchivosProcesados-$dirProcesados"
+	echo -e "Creando directorios de archivos procesados...\n"
+	mkdir $dirReportes
+	log "CreadoDirectorio-ArchivosDeReporte-$dirReportes"
+	echo -e "Creando directorios de archivos de reporte...\n"
+	mkdir $dirLogs
+	log "CreadoDirectorio-ArchivosDeLog-$dirLogs"
+	echo -e "Creando directorios de Log...\n"
+}
+
+modoReparacion()
+{
 	echo "Iniciando instalador en modo reparación..."
-else
+
+	# Existe instalación previa. Hay que borrar todos los directorios
+		echo "Reparacion finalizada"
+#	else
+		echo "No se ha encontrado una instalación previa."
+#	fi
+}
+
+validarPerl()
+{
 	#VALIDO SI PERL ESTA INSTALADO EN EL SISTEMA
 	VALOR=$(command -v perl)
 	if [ ! -z "$VALOR" -a "$VALOR" != " " ]; then
@@ -16,76 +65,99 @@ else
 		echo "Ha ocurrido un error. Es necesaria una instalación de Perl 5 o superior para continuar."
 		exit 1
 	fi
+}
 
-	echo -e "\n\n\n************* Bienvenido a la instalación de CONTROLO.*************\n\n\n"
+validarDirectorio()
+{
+	dirconf=true
+	if [ "$auxDir" = "$dirConfiguracion" ]
+	then
+		echo -e "El nombre dirconf es un nombre reservado. (Se utilizara el nombre asignado por defecto)\n"
+		dirconf=false
+	fi
+}
+
+instalacion()
+{
+	command clear
+	echo -e "\n\n\n************* Bienvenido a la instalación de CONTROL-O.*************\n\n\n"
 	echo -e "Durante la instalación deberá configurar nombres de directorios necesarios para la configuración del sistema.\n(Presionar enter para elegir el valor por defecto)"
 
-	dirEjecutables="bin"
-	echo -e "\nIngrese el nombre del directorio para los archivos ejecutables (Ej: ../bin): "
+	echo -e "\nIngrese el nombre del directorio para los archivos ejecutables (Ej: ../$dirEjecutables): "
 	read auxDir
-	if [ "$auxDir" != "" ]
+	validarDirectorio
+	log "SolicitaDirectorioEjecutables-Resp-$auxDir"
+	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
 	then
 		dirEjecutables=$auxDir
 	fi
 
-	dirMaestros="maestro"
-	echo -e "\nIngrese el nombre del directorio para los archivos maestros o tablas del sistema (Ej: ../maestro): "
+	echo -e "\nIngrese el nombre del directorio para los archivos maestros o tablas del sistema (Ej: ../$dirMaestros): "
 	read auxDir
-	if [ "$auxDir" != "" ]
+	validarDirectorio
+	log "SolicitaDirectorioEjecutables-Resp-$auxDir"
+	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
 	then
 		dirMaestros=$auxDir 
 	fi
 
-
-	dirEntrada="recibidos"
-	echo -e "\nIngrese el nombre del directorio para los archivos externos o de entrada (Ej: ../recibidos): "
+	echo -e "\nIngrese el nombre del directorio para los archivos externos o de entrada (Ej: ../$dirEntrada): "
 	read auxDir
-	if [ "$auxDir" != "" ]
+	validarDirectorio
+	log "SolicitaDirectorioEjecutables-Resp-$auxDir"
+	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
 	then
 		dirEntrada=$auxDir 
 	fi
 
-	dirNovedadesAceptadas="novedades"
-	echo -e "\nIngrese el nombre del directorio para los archivos de novedades aceptadas (Ej: ../novedades): "
+	echo -e "\nIngrese el nombre del directorio para los archivos de novedades aceptadas (Ej: ../$dirNovedadesAceptadas): "
 	read auxDir
-	if [ "$auxDir" != "" ]
+	validarDirectorio
+	log "SolicitaDirectorioEjecutables-Resp-$auxDir"
+	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
 	then
 		dirNovedadesAceptadas=$auxDir 
 	fi
 
-	dirRechazados="rechazados"
-	echo -e "\nIngrese el nombre del directorio para los archivos rechazados (Ej: ../rechazados): "
+	echo -e "\nIngrese el nombre del directorio para los archivos rechazados (Ej: ../$dirRechazados): "
 	read auxDir
-	if [ "$auxDir" != "" ]
+	validarDirectorio
+	log "SolicitaDirectorioEjecutables-Resp-$auxDir"
+	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
 	then
 		dirRechazados=$auxDir 
 	fi
 
-	dirProcesados="procesados"
-	echo -e "\nIngrese el nombre del directorio para los archivos procesados (Ej: ../procesados): "
+	echo -e "\nIngrese el nombre del directorio para los archivos procesados (Ej: ../$dirProcesados): "
 	read auxDir
-	if [ "$auxDir" != "" ]
+	validarDirectorio
+	log "SolicitaDirectorioEjecutables-Resp-$auxDir"
+	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
 	then
 		dirProcesados=$auxDir 
 	fi
 
-	dirReportes="reportes"
-	echo -e "\nIngrese el nombre del directorio para los archivos de reportes (Ej: ../reportes): "
+	echo -e "\nIngrese el nombre del directorio para los archivos de reportes (Ej: ../$dirReportes): "
 	read auxDir
-	if [ "$auxDir" != "" ]
+	validarDirectorio
+	log "SolicitaDirectorioEjecutables-Resp-$auxDir"
+	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
 	then
 		dirReportes=$auxDir 
 	fi
 
-	dirLogs="log"
-	echo -e "\nIngrese el nombre del directorio para los archivos de log (Ej: ../log): "
+	echo -e "\nIngrese el nombre del directorio para los archivos de log (Ej: ../$dirLogs): "
 	read auxDir
+	validarDirectorio
+	log "SolicitaDirectorioEjecutables-Resp-$auxDir"
 	if [ "$auxDir" != "" ]
 	then
 		dirLogs=$auxDir 
 	fi
 
 	dirConfiguracion="dirconf"
+
+	command clear
 
 	echo -e "\n\n"
 	echo "*************************************************************"
@@ -117,11 +189,51 @@ else
 	echo -e "\nSu instalación está lista. ¿Confirma la instalación? (S/N): "
 	read confirma
 
-	if [ "$confirma" = "S" ] || [ "$confirma" = "s" ]
-	then
-		echo -e "\nIniciando instalación...\n"
-		#Acá hay que crear directorios y mover archivos.
-	else
+	while [ [ "$confirma" != "S" ] || [ "$confirma" != "s" ] ]
+	do
+		log "-ConfirmaInstalacion-Resp-NO"
 		echo -e "\nInstalación cancelada...\n"
+		instalacion
+	done
+
+	log "ConfirmaInstalacion-Resp-SI"
+	
+	crearDirectorios
+
+	echo "Instalación finalizada."
+}
+
+#PROGRAMA PRINCIPAL
+
+if [ "$parametro" = "-r" ]
+then
+	modoReparacion
+else
+	validarPerl
+	# Seteo nombres de directorios por default
+	dirEjecutables="bin"
+	dirMaestros="maestro"
+	dirEntrada="recibidos"
+	dirNovedadesAceptadas="novedades"
+	dirRechazados="rechazados"
+	dirProcesados="procesados"
+	dirReportes="reportes"
+	dirLogs="log"
+	dirConfiguracion="dirconf"
+
+	if [ -f "dirconf/configuracion.conf" ]
+	then 
+		#Existe una instalación
+		echo -e "Existe una instalación previa. ¿Que desea hacer? \n 1- Reparar la instalación. \n2- Instalar nuevamente"
+		read opcion
+		if [ "$opcion" = "1" ]
+		then
+			log "-IniciadoModoReparacion"
+			modoReparacion
+		else
+			instalacion
+		fi
+	else
+		instalacion
 	fi
 fi
