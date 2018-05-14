@@ -1,14 +1,28 @@
 parametro=$1
 
 log() {
-    echo [$(date "+%Y-%m-%d %H:%M")] "$@" >> "logFile.log"
+    echo [$(date "+%Y-%m-%d %H:%M")]"$USER-$PWD-$@" >> "logFile.log"
+}
+
+crearConfig()
+{
+	dirActual=$PWD
+	echo "ejecutables-$dirActual/$dirEjecutables-$USER-"[$(date "+%Y-%m-%d %H:%M")] >> "instalacion.config"
+	echo "maestros-$dirActual/$dirMaestros-$USER-"[$(date "+%Y-%m-%d %H:%M")] >> "instalacion.config"
+	echo "entrada-$dirActual/$dirEntrada-$USER-"[$(date "+%Y-%m-%d %H:%M")] >> "instalacion.config"
+	echo "aceptados-$dirActual/$dirNovedadesAceptadas-$USER-"[$(date "+%Y-%m-%d %H:%M")] >> "instalacion.config"
+	echo "rechazados-$dirActual/$dirRechazados-$USER-"[$(date "+%Y-%m-%d %H:%M")] >> "instalacion.config"
+	echo "procesados-$dirActual/$dirProcesados-$USER-"[$(date "+%Y-%m-%d %H:%M")] >> "instalacion.config"
+	echo "reportes-$dirActual/$dirReportes-$USER-"[$(date "+%Y-%m-%d %H:%M")] >> "instalacion.config"
+	echo "logs-$dirActual/$dirLogs-$USER-"[$(date "+%Y-%m-%d %H:%M")] >> "instalacion.config"
+	log "CreadoArchivoConfig"
 }
 
 crearDirectorios()
 {
 	command clear
 	echo -e "Creando directorios de instalación...\n"
-	mkdir "dirconfig"
+	mkdir "dirconf"
 	log "CreadoDirectorio-dirconfig"
 	echo -e "Creando directorios de configuración...\n"
 	mkdir "InstallFiles"
@@ -38,6 +52,29 @@ crearDirectorios()
 	mkdir $dirLogs
 	log "CreadoDirectorio-ArchivosDeLog-$dirLogs"
 	echo -e "Creando directorios de Log...\n"
+}
+
+moverArchivos()
+{
+#Copio los archivos en la carpeta correspondiente
+	cp -f PPI.mae $dirMaestros/PPI.mae
+	log "Copiado-ArchivoMaestroPPI"
+	cp -f p-s.mae $dirMaestros/p-s.mae
+	log "Copiado-ArchivoMaestroPS"
+	cp -f T1.tab $dirMaestros/T1.tab
+	log "Copiado-ArchivoMaestroT1"
+	cp -f T2.tab $dirMaestros/T2.tab
+	log "Copiado-ArchivoMaestroT2"
+#Muevo los archivos de instalación a la carpeta de backup
+
+	mv -f PPI.mae InstallFiles/PPI.mae
+	log "Movido-ArchivoMaestroPPI"
+	mv -f p-s.mae InstallFiles/p-s.mae
+	log "Movido-ArchivoMaestroPS"
+	mv -f T1.tab InstallFiles/T1.tab
+	log "Movido-ArchivoMaestroT1"
+	mv -f T2.tab InstallFiles/T2.tab
+	log "Movido-ArchivoMaestroT2"
 }
 
 modoReparacion()
@@ -199,6 +236,8 @@ instalacion()
 	log "ConfirmaInstalacion-Resp-SI"
 	
 	crearDirectorios
+	moverArchivos
+	crearConfig
 
 	echo "Instalación finalizada."
 }
@@ -236,4 +275,7 @@ else
 	else
 		instalacion
 	fi
+	mv -f instalacion.config dirconf/instalacion.config
+	log "MovidoArchivoConfig"
+	mv -f logFile.log $dirLogs/logFile.log
 fi
