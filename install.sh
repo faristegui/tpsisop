@@ -98,12 +98,26 @@ validarPerl()
 
 validarDirectorio()
 {
-	dirconf=true
+	dirValido=true
+
 	if [ "$auxDir" = "$dirConfiguracion" ]
 	then
 		echo -e "El nombre dirconf es un nombre reservado. (Se utilizara el nombre asignado por defecto)\n"
-		dirconf=false
+		dirValido=false
 	fi
+	
+	while read -r line
+	do
+		if [ ! -d "$line" ]; then
+			if [ "$auxDir" = "$line" ]; then
+				echo -e "El nombre $auxDir ya existe. (Se utilizara el nombre asignado por defecto)\n"
+				dirValido=false
+				
+			fi		
+		fi
+	done <<<"$directoriosExistentes"
+
+	directoriosExistentes[$contadorDirectorios]=$auxDir
 }
 
 modoReparacion(){
@@ -147,77 +161,86 @@ modoReparacion(){
 
 instalacion()
 {
+	directoriosExistentes=""
 	echo -e "\n\n\n************* Bienvenido a la instalación de CONTROL-O.*************\n\n\n"
 	echo -e "Durante la instalación deberá configurar nombres de directorios necesarios para la configuración del sistema.\n(Presionar enter para elegir el valor por defecto)"
 
 	echo -e "\nIngrese el nombre del directorio para los archivos ejecutables (Ej: ../$dirEjecutables): "
 	read auxDir
+	contadorDirectorios=0
 	validarDirectorio
 	log "Solicita Directorio Ejecutables / Respuesta: $auxDir"
-	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
+	if [ "$auxDir" != "" ] && [ "$dirValido" != "false" ]
 	then
 		dirEjecutables=$auxDir
 	fi
 
 	echo -e "\nIngrese el nombre del directorio para los archivos maestros o tablas del sistema (Ej: ../$dirMaestros): "
 	read auxDir
+	contadorDirectorios=1
 	validarDirectorio
 	log "Solicita Directorio Maestros / Respuesta: $auxDir"
-	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
+	if [ "$auxDir" != "" ] && [ "$dirValido" != "false" ]
 	then
 		dirMaestros=$auxDir 
 	fi
 
 	echo -e "\nIngrese el nombre del directorio para los archivos externos o de entrada (Ej: ../$dirEntrada): "
 	read auxDir
+	contadorDirectorios=2
 	validarDirectorio
 	log "Solicita Directorio Entrada / Respuesta: $auxDir"
-	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
+	if [ "$auxDir" != "" ] && [ "$dirValido" != "false" ]
 	then
 		dirEntrada=$auxDir 
 	fi
 
 	echo -e "\nIngrese el nombre del directorio para los archivos de novedades aceptadas (Ej: ../$dirNovedadesAceptadas): "
 	read auxDir
+	contadorDirectorios=3
 	validarDirectorio
 	log "Solicita Directorio Novedades / Respuesta: $auxDir"
-	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
+	if [ "$auxDir" != "" ] && [ "$dirValido" != "false" ]
 	then
 		dirNovedadesAceptadas=$auxDir 
 	fi
 
 	echo -e "\nIngrese el nombre del directorio para los archivos rechazados (Ej: ../$dirRechazados): "
 	read auxDir
+	contadorDirectorios=4
 	validarDirectorio
 	log "Solicita Directorio Rechazados / Respuesta: $auxDir"
-	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
+	if [ "$auxDir" != "" ] && [ "$dirValido" != "false" ]
 	then
 		dirRechazados=$auxDir 
 	fi
 
 	echo -e "\nIngrese el nombre del directorio para los archivos procesados (Ej: ../$dirProcesados): "
 	read auxDir
+	contadorDirectorios=4
 	validarDirectorio
 	log "Solicita Directorio Procesados / Respuesta: $auxDir"
-	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
+	if [ "$auxDir" != "" ] && [ "$dirValido" != "false" ]
 	then
 		dirProcesados=$auxDir 
 	fi
 
 	echo -e "\nIngrese el nombre del directorio para los archivos de reportes (Ej: ../$dirReportes): "
 	read auxDir
+	contadorDirectorios=5
 	validarDirectorio
 	log "Solicita Directorio Reportes / Respuesta: $auxDir"
-	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
+	if [ "$auxDir" != "" ] && [ "$dirValido" != "false" ]
 	then
 		dirReportes=$auxDir 
 	fi
 
 	echo -e "\nIngrese el nombre del directorio para los archivos de log (Ej: ../$dirLogs): "
 	read auxDir
+	contadorDirectorios=6
 	validarDirectorio
 	log "Solicita Directorio Logs / Respuesta: $auxDir"
-	if [ "$auxDir" != "" ]
+	if [ "$auxDir" != "" ] && [ "$dirValido" != "false" ]
 	then
 		dirLogs=$auxDir 
 	fi
