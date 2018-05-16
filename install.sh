@@ -1,12 +1,16 @@
+#! /usr/bin/env bash
+
 parametro=$1
+#ruta=$(pwd)
+GRUPO=$PWD
 
 log() {
-    echo [$(date "+%Y-%m-%d %H:%M")]"$USER-$PWD-$@" >> "logFile.log"
+    echo "$GRUPO-$USER-$@-"[$(date "+%Y-%m-%d %H:%M")] >> "logFile.log"
 }
 
 crearConfig()
 {
-	dirActual=$PWD
+	dirActual=$GRUPO
 	echo "ejecutables-$dirActual/$dirEjecutables-$USER-"[$(date "+%Y-%m-%d %H:%M")] >> "instalacion.config"
 	echo "maestros-$dirActual/$dirMaestros-$USER-"[$(date "+%Y-%m-%d %H:%M")] >> "instalacion.config"
 	echo "entrada-$dirActual/$dirEntrada-$USER-"[$(date "+%Y-%m-%d %H:%M")] >> "instalacion.config"
@@ -15,42 +19,41 @@ crearConfig()
 	echo "procesados-$dirActual/$dirProcesados-$USER-"[$(date "+%Y-%m-%d %H:%M")] >> "instalacion.config"
 	echo "reportes-$dirActual/$dirReportes-$USER-"[$(date "+%Y-%m-%d %H:%M")] >> "instalacion.config"
 	echo "logs-$dirActual/$dirLogs-$USER-"[$(date "+%Y-%m-%d %H:%M")] >> "instalacion.config"
-	log "CreadoArchivoConfig"
+	log "Creado Archivo Config"
 }
 
 crearDirectorios()
 {
-	command clear
 	echo -e "Creando directorios de instalación...\n"
 	mkdir "dirconf"
-	log "CreadoDirectorio-dirconfig"
+	log "Creado Directorio-dirconfig"
 	echo -e "Creando directorios de configuración...\n"
 	mkdir "InstallFiles"
-	log "CreadoDirectorio-InstallFiles-Backup"
+	log "Creado Directorio InstallFiles (Backup)"
 	echo -e "Creando directorios de backup...\n"
 	mkdir $dirEjecutables
-	log "CreadoDirectorioEjecutables-$dirEjecutables"
+	log "Creado Directorio Ejecutables /$dirEjecutables"
 	echo -e "Creando directorios de ejecutables...\n"
 	mkdir $dirMaestros
-	log "CreadoDirectorio-ArchivosMaestros-$dirMaestros"
+	log "Creado Directorio Archivos Maestros /$dirMaestros"
 	echo -e "Creando directorios de archivos maestros...\n"
 	mkdir $dirEntrada
-	log "CreadoDirectorio-ArchivosDeEntrada-$dirEntrada"
+	log "Creado Directorio Archivos De Entrada /$dirEntrada"
 	echo -e "Creando directorios de archivos de entrada...\n"
 	mkdir $dirNovedadesAceptadas
-	log "CreadoDirectorio-ArchivoDeNovedadesAceptadas-$dirNovedadesAceptadas"
+	log "Creado Directorio Archivo De Novedades Aceptadas /$dirNovedadesAceptadas"
 	echo -e "Creando directorios de archivos de novedades aceptadas...\n"
 	mkdir $dirRechazados
-	log "CreadoDirectorio-ArchivosRechazados-$dirRechazados"
+	log "Creado Directorio Archivos Rechazados /$dirRechazados"
 	echo -e "Creando directorios de archivos rechazados...\n"
 	mkdir $dirProcesados
-	log "CreadoDirectorio-ArchivosProcesados-$dirProcesados"
+	log "Creado Directorio Archivos Procesados /$dirProcesados"
 	echo -e "Creando directorios de archivos procesados...\n"
 	mkdir $dirReportes
-	log "CreadoDirectorio-ArchivosDeReporte-$dirReportes"
+	log "Creado Directorio Archivos De Reporte /$dirReportes"
 	echo -e "Creando directorios de archivos de reporte...\n"
 	mkdir $dirLogs
-	log "CreadoDirectorio-ArchivosDeLog-$dirLogs"
+	log "Creado Directorio Archivos De Log /$dirLogs"
 	echo -e "Creando directorios de Log...\n"
 }
 
@@ -58,34 +61,23 @@ moverArchivos()
 {
 #Copio los archivos en la carpeta correspondiente
 	cp -f PPI.mae $dirMaestros/PPI.mae
-	log "Copiado-ArchivoMaestroPPI"
+	log "Copiado Archivo Maestro PPI.mae"
 	cp -f p-s.mae $dirMaestros/p-s.mae
-	log "Copiado-ArchivoMaestroPS"
+	log "Copiado Archivo Maestro P-S.mae"
 	cp -f T1.tab $dirMaestros/T1.tab
-	log "Copiado-ArchivoMaestroT1"
+	log "Copiado Archivo Maestro T1.tab"
 	cp -f T2.tab $dirMaestros/T2.tab
-	log "Copiado-ArchivoMaestroT2"
+	log "Copiado Archivo Maestro T2.tab"
+
 #Muevo los archivos de instalación a la carpeta de backup
-
 	mv -f PPI.mae InstallFiles/PPI.mae
-	log "Movido-ArchivoMaestroPPI"
+	log "Movido Archivo Maestro a InstallFiles PPI.mae"
 	mv -f p-s.mae InstallFiles/p-s.mae
-	log "Movido-ArchivoMaestroPS"
+	log "Movido Archivo Maestro  a InstallFiles PS.mae"
 	mv -f T1.tab InstallFiles/T1.tab
-	log "Movido-ArchivoMaestroT1"
+	log "Movido Archivo Maestro a InstallFiles T1.tab"
 	mv -f T2.tab InstallFiles/T2.tab
-	log "Movido-ArchivoMaestroT2"
-}
-
-modoReparacion()
-{
-	echo "Iniciando instalador en modo reparación..."
-
-	# Existe instalación previa. Hay que borrar todos los directorios
-		echo "Reparacion finalizada"
-#	else
-		echo "No se ha encontrado una instalación previa."
-#	fi
+	log "Movido Archivo Maestro a InstallFiles T2.tab"
 }
 
 validarPerl()
@@ -96,7 +88,7 @@ validarPerl()
 		echo "Perl está correctamente instalado."
 		Version=$(perl -v | grep 'This is perl' | sed "s/This is perl \([0-9]\),.*/\1/")
 		if (($Version >= 5)); then
-			echo "Version de Perl: $Version"
+			echo -e "Version de Perl: $Version"
 		fi
 	else
 		echo "Ha ocurrido un error. Es necesaria una instalación de Perl 5 o superior para continuar."
@@ -114,16 +106,54 @@ validarDirectorio()
 	fi
 }
 
+modoReparacion(){
+	if [ -f "$GRUPO/dirconf/instalacion.config" ]; then
+		carpetasACrear=$(cut -d- -f 2 "dirconf/instalacion.config")
+		contador=0
+		
+		echo -e "\n\nDirectorios de instalación:\n\n"
+		while read -r line
+	  		do
+			carpetas[$contador]="$line"
+
+			echo ${carpetas[$contador]}			
+
+			if [ ! -d "$line" ]; then
+				mkdir -p "$line"
+				log "Reparando directorio $line"
+			fi
+			contador+=1
+		done <<<"$carpetasACrear"
+
+		#Archivos ejecutables
+		ejecutables=$(find "InstallFiles" -type f -iname "*.sh" -o -iname "*.pl" -o -iname "*.pm")
+		while read -r line
+		do
+			cp "$line" "${carpetas[0]}"
+			log "Reparando archivos ejecutables. $line"
+		done <<<"$ejecutables"
+		#Archivos maestros
+		maestros=$(find "InstallFiles" -type f -iname "*.mae" -o -iname "*.tab")
+		while read -r line
+		do
+			cp "$line" "${carpetas[1]}"
+			log "Reparando archivos maestros. $line"
+		done <<<"$maestros"
+  	else
+    		echo "No hay instalacion previa, nada para reparar."
+		log "Modo reparacion finalizado. No hay instalación para reparar."
+  	fi
+}
+
 instalacion()
 {
-	command clear
 	echo -e "\n\n\n************* Bienvenido a la instalación de CONTROL-O.*************\n\n\n"
 	echo -e "Durante la instalación deberá configurar nombres de directorios necesarios para la configuración del sistema.\n(Presionar enter para elegir el valor por defecto)"
 
 	echo -e "\nIngrese el nombre del directorio para los archivos ejecutables (Ej: ../$dirEjecutables): "
 	read auxDir
 	validarDirectorio
-	log "SolicitaDirectorioEjecutables-Resp-$auxDir"
+	log "Solicita Directorio Ejecutables / Respuesta: $auxDir"
 	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
 	then
 		dirEjecutables=$auxDir
@@ -132,7 +162,7 @@ instalacion()
 	echo -e "\nIngrese el nombre del directorio para los archivos maestros o tablas del sistema (Ej: ../$dirMaestros): "
 	read auxDir
 	validarDirectorio
-	log "SolicitaDirectorioEjecutables-Resp-$auxDir"
+	log "Solicita Directorio Maestros / Respuesta: $auxDir"
 	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
 	then
 		dirMaestros=$auxDir 
@@ -141,7 +171,7 @@ instalacion()
 	echo -e "\nIngrese el nombre del directorio para los archivos externos o de entrada (Ej: ../$dirEntrada): "
 	read auxDir
 	validarDirectorio
-	log "SolicitaDirectorioEjecutables-Resp-$auxDir"
+	log "Solicita Directorio Entrada / Respuesta: $auxDir"
 	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
 	then
 		dirEntrada=$auxDir 
@@ -150,7 +180,7 @@ instalacion()
 	echo -e "\nIngrese el nombre del directorio para los archivos de novedades aceptadas (Ej: ../$dirNovedadesAceptadas): "
 	read auxDir
 	validarDirectorio
-	log "SolicitaDirectorioEjecutables-Resp-$auxDir"
+	log "Solicita Directorio Novedades / Respuesta: $auxDir"
 	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
 	then
 		dirNovedadesAceptadas=$auxDir 
@@ -159,7 +189,7 @@ instalacion()
 	echo -e "\nIngrese el nombre del directorio para los archivos rechazados (Ej: ../$dirRechazados): "
 	read auxDir
 	validarDirectorio
-	log "SolicitaDirectorioEjecutables-Resp-$auxDir"
+	log "Solicita Directorio Rechazados / Respuesta: $auxDir"
 	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
 	then
 		dirRechazados=$auxDir 
@@ -168,7 +198,7 @@ instalacion()
 	echo -e "\nIngrese el nombre del directorio para los archivos procesados (Ej: ../$dirProcesados): "
 	read auxDir
 	validarDirectorio
-	log "SolicitaDirectorioEjecutables-Resp-$auxDir"
+	log "Solicita Directorio Procesados / Respuesta: $auxDir"
 	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
 	then
 		dirProcesados=$auxDir 
@@ -177,7 +207,7 @@ instalacion()
 	echo -e "\nIngrese el nombre del directorio para los archivos de reportes (Ej: ../$dirReportes): "
 	read auxDir
 	validarDirectorio
-	log "SolicitaDirectorioEjecutables-Resp-$auxDir"
+	log "Solicita Directorio Reportes / Respuesta: $auxDir"
 	if [ "$auxDir" != "" ] && [ "$dirconf" != "false" ]
 	then
 		dirReportes=$auxDir 
@@ -186,15 +216,13 @@ instalacion()
 	echo -e "\nIngrese el nombre del directorio para los archivos de log (Ej: ../$dirLogs): "
 	read auxDir
 	validarDirectorio
-	log "SolicitaDirectorioEjecutables-Resp-$auxDir"
+	log "Solicita Directorio Logs / Respuesta: $auxDir"
 	if [ "$auxDir" != "" ]
 	then
 		dirLogs=$auxDir 
 	fi
 
 	dirConfiguracion="dirconf"
-
-	command clear
 
 	echo -e "\n\n"
 	echo "*************************************************************"
@@ -228,18 +256,19 @@ instalacion()
 
 	while [ [ "$confirma" != "S" ] || [ "$confirma" != "s" ] ]
 	do
-		log "-ConfirmaInstalacion-Resp-NO"
+		log "-Confirma Instalacion / Respuesta: NO"
 		echo -e "\nInstalación cancelada...\n"
 		instalacion
 	done
 
-	log "ConfirmaInstalacion-Resp-SI"
+	log "Confirma Instalacion / Respuesta: SI"
 	
 	crearDirectorios
 	moverArchivos
 	crearConfig
 
 	echo "Instalación finalizada."
+	log "Instalacion finalizada"
 }
 
 #PROGRAMA PRINCIPAL
@@ -260,22 +289,19 @@ else
 	dirLogs="log"
 	dirConfiguracion="dirconf"
 
-	if [ -f "dirconf/configuracion.conf" ]
+	if [ -f "$GRUPO/dirconf/instalacion.config" ]
 	then 
 		#Existe una instalación
-		echo -e "Existe una instalación previa. ¿Que desea hacer? \n 1- Reparar la instalación. \n2- Instalar nuevamente"
-		read opcion
-		if [ "$opcion" = "1" ]
-		then
-			log "-IniciadoModoReparacion"
-			modoReparacion
-		else
-			instalacion
-		fi
+		echo -e "¡Hay una instalación existente del sistema!\n\nSe iniciara el modo reparación."
+		log "Iniciado Modo Reparacion"
+		modoReparacion
+		echo -e "\nModo reparacion finalizado correctamente."
+		log "Finalizado modo reparacion."
 	else
 		instalacion
+		mv -f instalacion.config dirconf/instalacion.config
+		log "Movido Archivo Configuracion"
 	fi
-	mv -f instalacion.config dirconf/instalacion.config
-	log "MovidoArchivoConfig"
+	
 	mv -f logFile.log $dirLogs/logFile.log
 fi
