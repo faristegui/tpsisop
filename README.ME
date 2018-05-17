@@ -24,10 +24,10 @@ Archivos maestros y archivos ejecutables del sistema.
 
 8- La ejecución de este comando comenzara la instalación del sistema en la ubicación elegida.
 El sistema requiere que se encuentre instalado Perl 5 o superior en el equipo donde se va a instalar.
-El instalador verifica que haya una versión de Perl necesaria para la correcta ejecución del sistema.
+En caso de no cumplir este requisito, el instalador cancelara mostrando un mensaje.
 	   
-9- Una vez iniciado el instalador, se le pedirá que ingrese los nombres de los directorios donde se van a ubicar los archivos necesarios para la correcta ejecución del sistema.
-Si no se especifica ningún nombre, se utilizaran nombres por defecto.
+9- Si las condiciones están dadas, se le pedirá que ingrese los nombres de los directorios donde se van a ubicar los archivos necesarios para la correcta ejecución.
+Si no se especifica ningún nombre, se utilizaran nombres por defecto anunciados en la pantalla.
 
 10- Si existiera una instalación previa en la ubicación elegida, el sistema procederá a verificar y reparar esa instalación en el caso de que la instalación este defectuosa.
 Sin embargo, el modo de reparación, se puede  ejecutar agregando el parámetro -r al comando install.sh. (Ej: . install -r)

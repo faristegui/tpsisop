@@ -1,7 +1,6 @@
 #! /usr/bin/env bash
 
 parametro=$1
-#ruta=$(pwd)
 GRUPO=$PWD
 
 log() {
@@ -163,6 +162,7 @@ modoReparacion(){
 
 instalacion()
 {
+	log "Inicia la instalación."
 	directoriosExistentes=""
 	echo -e "\n\n\n************* Bienvenido a la instalación de CONTROL-O.*************\n\n\n"
 	echo -e "Durante la instalación deberá configurar nombres de directorios necesarios para la configuración del sistema.\n(Presionar enter para elegir el valor por defecto)"
@@ -281,7 +281,7 @@ instalacion()
 
 	if [ "$confirma" = "N" ] || [ "$confirma" = "n" ]
 	then
-		log "-Confirma Instalacion / Respuesta: NO"
+		log "-Confirma Instalacion / Respuesta: NO / Se lanza nuevamente el instalador."
 		echo -e "\nInstalación cancelada...\n"
 		instalacion
 	fi
