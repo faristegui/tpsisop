@@ -5,7 +5,7 @@ parametro=$1
 GRUPO=$PWD
 
 log() {
-    echo "$GRUPO-$USER-$@-"[$(date "+%Y-%m-%d %H:%M")] >> "logFile.log"
+    echo "$GRUPO-$USER-$@-"[$(date "+%Y-%m-%d %H:%M")] >> "install.log"
 }
 
 crearConfig()
@@ -24,35 +24,35 @@ crearConfig()
 
 crearDirectorios()
 {
-	echo -e "Creando directorios de instalación...\n"
+	echo -e "\nCreando directorios de instalación...\n"
 	mkdir "dirconf"
 	log "Creado Directorio-dirconfig"
 	echo -e "Creando directorios de configuración...\n"
 	mkdir "InstallFiles"
 	log "Creado Directorio InstallFiles (Backup)"
 	echo -e "Creando directorios de backup...\n"
-	mkdir $dirEjecutables
+	mkdir -p $dirEjecutables
 	log "Creado Directorio Ejecutables /$dirEjecutables"
 	echo -e "Creando directorios de ejecutables...\n"
-	mkdir $dirMaestros
+	mkdir -p $dirMaestros
 	log "Creado Directorio Archivos Maestros /$dirMaestros"
 	echo -e "Creando directorios de archivos maestros...\n"
-	mkdir $dirEntrada
+	mkdir -p $dirEntrada
 	log "Creado Directorio Archivos De Entrada /$dirEntrada"
 	echo -e "Creando directorios de archivos de entrada...\n"
-	mkdir $dirNovedadesAceptadas
+	mkdir -p $dirNovedadesAceptadas
 	log "Creado Directorio Archivo De Novedades Aceptadas /$dirNovedadesAceptadas"
 	echo -e "Creando directorios de archivos de novedades aceptadas...\n"
-	mkdir $dirRechazados
+	mkdir -p $dirRechazados
 	log "Creado Directorio Archivos Rechazados /$dirRechazados"
 	echo -e "Creando directorios de archivos rechazados...\n"
-	mkdir $dirProcesados
+	mkdir -p $dirProcesados
 	log "Creado Directorio Archivos Procesados /$dirProcesados"
 	echo -e "Creando directorios de archivos procesados...\n"
-	mkdir $dirReportes
+	mkdir -p $dirReportes
 	log "Creado Directorio Archivos De Reporte /$dirReportes"
 	echo -e "Creando directorios de archivos de reporte...\n"
-	mkdir $dirLogs
+	mkdir -p $dirLogs
 	log "Creado Directorio Archivos De Log /$dirLogs"
 	echo -e "Creando directorios de Log...\n"
 }
@@ -91,7 +91,9 @@ validarPerl()
 			echo -e "Version de Perl: $Version"
 		fi
 	else
-		echo "Ha ocurrido un error. Es necesaria una instalación de Perl 5 o superior para continuar."
+		echo "Ha ocurrido un error. Es necesaria una instalación de Perl 5 o superior para continuar.\n"
+		log "No se instalara el sistema. No existe la version de Perl necesaria."
+		read -rsp $'Presione ENTER para cerrar el programa...\n'
 		exit 1
 	fi
 }
@@ -274,24 +276,30 @@ instalacion()
 
 	echo "*************************************************************"
 
-	echo -e "\nSu instalación está lista. ¿Confirma la instalación? (S/N): "
-	read confirma
+	echo -e "\nSu instalación está lista. ¿Confirma la instalación? (S/N) (Presione cualquier otra tecla para salir del instalador): "
+	read -n 1 confirma
 
-	while [ [ "$confirma" != "S" ] || [ "$confirma" != "s" ] ]
-	do
+	if [ "$confirma" = "N" ] || [ "$confirma" = "n" ]
+	then
 		log "-Confirma Instalacion / Respuesta: NO"
 		echo -e "\nInstalación cancelada...\n"
 		instalacion
-	done
+	fi
 
-	log "Confirma Instalacion / Respuesta: SI"
-	
-	crearDirectorios
-	moverArchivos
-	crearConfig
-
-	echo "Instalación finalizada."
-	log "Instalacion finalizada"
+	if [ "$confirma" = "S" ] || [ "$confirma" = "s" ]
+	then
+		log "Confirma Instalacion / Respuesta: SI"
+		crearDirectorios
+		moverArchivos
+		crearConfig
+		echo "Instalación finalizada."
+		log "Instalacion finalizada"
+	else
+		echo -e "¡¡ATENCION!!  La instalación ha sido cancelada. No se instalara el sistema.\n"		
+		log "Instalación cancelada por el usuario."
+		read -rsp $'Presione ENTER para cerrar el programa...\n'
+		exit 1
+	fi
 }
 
 #PROGRAMA PRINCIPAL
@@ -324,7 +332,6 @@ else
 		instalacion
 		mv -f instalacion.config dirconf/instalacion.config
 		log "Movido Archivo Configuracion"
+		mv -f install.log $dirLogs/install.log
 	fi
-	
-	mv -f logFile.log $dirLogs/logFile.log
 fi
