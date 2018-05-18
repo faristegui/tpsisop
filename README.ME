@@ -7,35 +7,35 @@
 
 	* Proceso de descarga y descompresión del sistema:
 
-	1- Descargar el paquete Grupo1.tar.gz de la siguiente dirección ....
+1- Descargar el paquete Grupo1.tar.gz de la siguiente dirección ....
 
-	2- Mover el archivo descargado a una ubicación deseada
+2- Mover el archivo descargado a una ubicación deseada
 
-	3- Abrir una terminal en esta ubicación
+3- Abrir una terminal en esta ubicación
 
-	4- Con la terminal en la ubicación elegida para la instalación, ejecutar el comando tar -xzvf Grupo1.tar.gz
+4- Con la terminal en la ubicación elegida para la instalación, ejecutar el comando tar -xzvf Grupo1.tar.gz
 
-	5- La ejecución del comando, generará un directorio llamado Grupo1 que contiene archivos de la instalación.
-	   Archivos maestros y archivos ejecutables del sistema.
+5- La ejecución del comando, generará un directorio llamado Grupo1 que contiene archivos de la instalación.
+Archivos maestros y archivos ejecutables del sistema.
 
-	6- Dirigirse al directorio Grupo1 con el comando cd Grupo1
+6- Dirigirse al directorio Grupo1 con el comando cd Grupo1
 
-	7- Ubicado en este directorio, ejecutar por terminal el comando . install.sh
+7- Ubicado en este directorio, ejecutar por terminal el comando . install.sh
 
-	8- La ejecución de este comando comenzara la instalación del sistema en la ubicación elegida.
-	   El sistema requiere que se encuentre instalado Perl 5 o superior en el equipo donde se va a instalar.
-	   El instalador verifica que haya una versión de Perl necesaria para la correcta ejecución del sistema.
+8- La ejecución de este comando comenzara la instalación del sistema en la ubicación elegida.
+El sistema requiere que se encuentre instalado Perl 5 o superior en el equipo donde se va a instalar.
+El instalador verifica que haya una versión de Perl necesaria para la correcta ejecución del sistema.
 	   
-	9- Una vez iniciado el instalador, se le pedirá que ingrese los nombres de los directorios donde se van a ubicar
-	   los archivos necesarios para la correcta ejecución del sistema. Si no se especifica ningún nombre, se utilizaran
-	   nombres por defecto.
+9- Una vez iniciado el instalador, se le pedirá que ingrese los nombres de los directorios donde se van a ubicar
+los archivos necesarios para la correcta ejecución del sistema. Si no se especifica ningún nombre, se utilizaran
+nombres por defecto.
 
-	10- Si existiera una instalación previa en la ubicación elegida, el sistema procederá a verificar y reparar esa instalación
-	    en el caso de que la instalación este defectuosa.
-	    Sin embargo, el modo de reparación, se puede  ejecutar agregando el parámetro -r al comando install.sh. (Ej: . install -r)
+10- Si existiera una instalación previa en la ubicación elegida, el sistema procederá a verificar y reparar esa instalación
+en el caso de que la instalación este defectuosa.
+Sin embargo, el modo de reparación, se puede  ejecutar agregando el parámetro -r al comando install.sh. (Ej: . install -r)
 
-	11- Luego de completarse la instalación se crea una estructura de directorios que contiene los archivos para la ejecución.
-	    En el directorio Grupo1 se crean todos los directorios que definio el usuario en la instalación. Además se crea el directorio
-	    InstallFiles que contiene los archivos de ejecución, para una posible recuperación del sistema en caso de errores.
-	    Otro directorio generado es el dirconf, que contiene un archivo instalación.config, en el que se guarda toda la información
-	    de la instalación.
+11- Luego de completarse la instalación se crea una estructura de directorios que contiene los archivos para la ejecución.
+En el directorio Grupo1 se crean todos los directorios que definio el usuario en la instalación. Además se crea el directorio
+InstallFiles que contiene los archivos de ejecución, para una posible recuperación del sistema en caso de errores.
+Otro directorio generado es el dirconf, que contiene un archivo instalación.config, en el que se guarda toda la información
+de la instalación.
