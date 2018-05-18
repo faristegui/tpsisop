@@ -204,7 +204,7 @@ do
 	    while [[  $CONTADOR -lt ${#formatos[*]} && $campoCorrecto == 1 ]]; do
 
 	    	#este if remplaza los campos vacios por 0 para evitar que se pasen mal por parametro
-	    	if [[ ${vec[CONTADOR]}=='' ]];then
+	    	if [[ ${vec[CONTADOR]} == '' ]];then
 				vec[CONTADOR]=0;
 			fi
 	        evaluarCampo ${vec[CONTADOR]} ${formatos[CONTADOR]} ${nombres_campos[CONTADOR]}
