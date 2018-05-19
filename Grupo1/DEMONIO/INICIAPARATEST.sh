@@ -1,0 +1,11 @@
+
+# SOLO PARA TESTING DEL DEMONIO
+
+source DetectO.sh &
+
+PID_DEMONIO=$!
+
+echo "PID DEL DEMONIO: $PID_DEMONIO"
+
+export PID_DEMONIO
+
