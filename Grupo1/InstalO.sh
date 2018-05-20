@@ -67,6 +67,16 @@ moverArchivos()
 	log "Copiado Archivo Maestro T1.tab"
 	cp -f T2.tab $dirMaestros/T2.tab
 	log "Copiado Archivo Maestro T2.tab"
+	cp -f DetectO.sh $dirEjecutables/DetectO.sh
+	log "Copiado Archivo Ejecutable DetectO.sh"
+	cp -f StopO.sh $dirEjecutables/StopO.sh
+	log "Copiado Archivo Ejecutable StopO.sh"
+	cp -f LogO.sh $dirEjecutables/LogO.sh
+	log "Copiado Archivo Ejecutable LogO.sh"
+	cp -f InicializadorO.sh $dirEjecutables/InicializadorO.sh
+	log "Copiado Archivo Ejecutable InicializadorO.sh"
+	cp ReportO/* $dirEjecutables
+	log "Copiado Directorio Reporto"
 
 #Muevo los archivos de instalación a la carpeta de backup
 	mv -f PPI.mae InstallFiles/PPI.mae
@@ -77,6 +87,16 @@ moverArchivos()
 	log "Movido Archivo Maestro a InstallFiles T1.tab"
 	mv -f T2.tab InstallFiles/T2.tab
 	log "Movido Archivo Maestro a InstallFiles T2.tab"
+	mv -f T2.tab InstallFiles/DetectO.sh
+	log "Movido Archivo Ejecutable a InstallFiles DetectO.sh"
+	mv -f T2.tab InstallFiles/StopO.sh
+	log "Movido Archivo Ejecutable a InstallFiles StopO.sh"
+	mv -f T2.tab InstallFiles/LogO.sh
+	log "Movido Archivo Ejecutable a InstallFiles LogO.sh"
+	mv -f T2.tab InstallFiles/InicializadorO.sh
+	log "Movido Archivo Ejecutable a InstallFiles InicializadorO.sh"
+	cp ReportO/* InstallFiles
+	log "Movido Directorio Reporto a InstallFiles"
 }
 
 validarPerl()
@@ -141,12 +161,14 @@ modoReparacion(){
 		done <<<"$carpetasACrear"
 
 		#Archivos ejecutables
-		ejecutables=$(find "InstallFiles" -type f -iname "*.sh" -o -iname "*.pl" -o -iname "*.pm")
+		ejecutables=$(find "InstallFiles" -type f -iname "*.sh" -o -iname "*.pl")
 		while read -r line
 		do
 			cp "$line" "${carpetas[0]}"
 			log "Reparando archivos ejecutables. $line"
 		done <<<"$ejecutables"
+		cp InstallFiles/* ${carpetas[0]}
+		log "Copiado Directorio Reporto"
 		#Archivos maestros
 		maestros=$(find "InstallFiles" -type f -iname "*.mae" -o -iname "*.tab")
 		while read -r line
