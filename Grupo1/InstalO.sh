@@ -93,7 +93,7 @@ moverArchivos()
 	log "Movido Archivo Ejecutable a InstallFiles DetectO.sh"
 	mv -f StopO.sh InstallFiles/StopO.sh
 	log "Movido Archivo Ejecutable a InstallFiles log.sh"
-	mv -f StopO.sh InstallFiles/log.sh
+	mv -f log.sh InstallFiles/log.sh
 	log "Movido Archivo Ejecutable a InstallFiles StopO.sh"
 	mv -f LogO.sh InstallFiles/LogO.sh
 	log "Movido Archivo Ejecutable a InstallFiles LogO.sh"
