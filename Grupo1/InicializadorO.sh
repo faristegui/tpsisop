@@ -41,14 +41,6 @@ for x in EJECUTABLES MAESTROS NOVEDADES ACEPTADOS RECHAZADOS PROCESADOS LOGS; do
     fi
 done
 
-log "se crea la variable de ambiente DIRABUS"
-echo "se crea la variable de ambiente DIRABUS"
-export DIRABUS
-read -p $'Defina el directorio de búsqueda: Grupo1/' -ei dirabus DIRABUS
-DIRABUS="$GRUPO/$DIRABUS"
-mkdir -p $DIRABUS
-echo -e "\e[1;32mDirectorio de búsqueda creado correctamente.\e[0m"
-
 log "cambio de permisos en MAESTROS y EJECUTABLES"
 echo "cambio de permisos en MAESTROS y EJECUTABLES"
 find "$MAESTROS" -type f -exec chmod u+r {} +
