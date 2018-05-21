@@ -18,42 +18,29 @@ require 'runner/tests_runner.pl';
 my $reporto = undef;
 
 sub before {
-  $reporto = &Reporto("Argentina","SAP",{'desde' => "03/11/2007",'hasta' => "03/11/2008"});
-  # $reporto->{'imprimirVariablesDeAmbiente'}();
+  $reporto = &Reporto();
+  # putsVariablesDeAmbiente();
 }
 
 my $tests = {
     'debeObtenerElNombreDelaClase' => sub {
         is($reporto->{'clase'}(),"ReportO");
     },
-    'debeObtenerElPais' => sub {
-        is($reporto->{'pais'}(),"Argentina");
-    },    
-    'debeObtenerElSistema' => sub {
-        is($reporto->{'sistema'}(),"SAP");
-    }, 
-    'debeObtenerElRangoDesde' => sub {
-        my $rango = $reporto->{'rango'}();
-        is($rango->{'desde'},"03/11/2007");
-    },
-    'debeObtenerElRangoHasta' => sub {
-        my $rango = $reporto->{'rango'}();
-        is($rango->{'hasta'},"03/11/2008");
-    },
     'debeEncontrarUnSistemaValido' => sub {
         is($reporto->{'sistemaValido?'}(), 1);
     },
     'debeEncontrarUnSistemaNoValido' => sub {
-        my $vm = $ENV{'VM'};
-        $ENV{'VM'} = "";
+        my $vm = $ENV{'ARCHIVO_MAESTRO_DIR'};
+        $ENV{'ARCHIVO_MAESTRO_DIR'} = "";
         is($reporto->{'sistemaValido?'}(), 0);
-        $ENV{'VM'} = $vm;
-    }#,
-    # 'debeFiltrarArchivoMaestro' => sub {
-    #     my @maestro = $reporto->{'archivoMaestro'}();
-    #     my @maestroFiltrado = $reporto->{'filtrar'}(\@maestro);
-    #     ok(scalar(@maestroFiltrado) <= scalar(@maestro));
-    # }
+        $ENV{'ARCHIVO_MAESTRO_DIR'} = $vm;
+    },
+    'debeFiltrarArchivoMaestroPorSistema' => sub {
+        my @maestro = $reporto->{'archivoMaestro'}();
+        #$reporto->{'putsLdL'}(@maestro);
+        my @maestroFiltrado = $reporto->{'filtrarPorSistema'}(\@maestro, "A");
+        ok(scalar(@maestroFiltrado) <= scalar(@maestro));
+    }
 };
 
 sub after {

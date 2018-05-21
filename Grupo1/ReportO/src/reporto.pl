@@ -1,30 +1,35 @@
-use Text::CSV;
-
 sub Reporto {
-    my ($pais,$sistema,$rango) = @_;
     sub readCSV {
-        my ($path,$separator) = @_;
-        my $csv_parser = Text::CSV->new({ sep_char => ',' });
-        open(my $data, '<', $path) or die "No se pudo leer archivo' $path'\n";
+        my ($params) = @_;
+        my $path = $params->{'path'};
+        open(my $data, '<', $path) or die "No se pudo leer archivo: $path'\n";
         my @lista = ();
+        my $conteoLineasNoParseadas = 0;
         while (my $linea = <$data>) {
-            chomp $linea;
-            if ($csv_parser->parse($linea)) {
-                my @campos = $csv_parser->fields();
-                push(@lista,@campos);
-            }else{
-                warn "Una linea del archivo no pudo ser parseada: $linea\n";
+            chomp($linea);
+            my @campos = split($params->{'separator'},$linea);
+            push(@lista,[@campos]);
+        }
+        close($data);
+        return @lista;
+    }
+    sub filtrarLdL {
+        my ($params) = @_;
+        my @filtrado = ();
+
+        #putsLdL(@{$params->{'ldl'}});
+        foreach my $lista (@{$params->{'ldl'}}) {
+            if($params->{'criteria'}(@$lista[$params->{'numeroDeCampo'}])) {
+                push(@filtrado,[@$lista]);
             }
         }
-        return @lista;
+        #putsLdL(@filtrado);
+        return @filtrado;
     }
     my $self = {
         'clase' => sub { 'ReportO' },
-        'pais' => sub { $pais },
-        'sistema' => sub { $sistema },
-        'rango' => sub { $rango },
         'sistemaValido?' => sub {
-            $vm = $ENV{'VM'}; 
+            $vm = $ENV{'ARCHIVO_MAESTRO_DIR'}; 
             if(!($vm eq "")){
                 return 1;
             }else{
@@ -34,23 +39,55 @@ sub Reporto {
         'archivoMaestro' => sub {
             my $maestro_path = $ENV{'ARCHIVO_MAESTRO_DIR'};
             if(defined($maestro_path)){
-               my @maestro = readCSV($maestro_path,',');
+               my @maestro = readCSV({'path' => $maestro_path, 'separator' => ';'});
                return @maestro;
             }else{
                 die "El archivo maestro esta indefinido, chequee las variables de ambiente\n";
             }
         },
-        'filtrar' => sub { #Espera un array de lineas
-            my @contenido = @{$_[0]};
-            return @contenido;
-        },
-        'imprimirVariablesDeAmbiente' => sub {
-            foreach (sort keys %ENV) { 
-                print "$_  =  $ENV{$_}\n"; 
-            }
+        'filtrarPorSistema' => sub { #Espera una lista de listas
+            my ($ldl,$filtro) = @_;
+            my @filtradoPorSistema = filtrarLdL({
+                'ldl' => $ldl,
+                'numeroDeCampo' => 0,
+                'criteria' => sub {
+                    my ($sistema) = @_;
+                    if($sistema eq $filtro){
+                        return 1;
+                    }else{
+                        return 0;
+                    }
+                }
+            });
+            return @filtradoPorSistema;
         }
     };
     return $self;
+}
+
+sub putsVariablesDeAmbiente {
+    foreach (sort keys %ENV) { 
+        print "$_  =  $ENV{$_}\n"; 
+    }
+}
+
+sub putsLista {
+    my (@lista) = @_;
+    foreach my $elem (@lista) {
+        print " ($elem)";
+    }
+    print "\n";
+}
+
+sub putsLdL {
+    my (@lista_de_listas) = @_;
+    foreach my $lista (@lista_de_listas) {
+        print " List:";
+        foreach my $elem (@$lista) {
+            print " ($elem)";
+        }
+        print "\n ";
+    }
 }
 
 return 1
