@@ -7,57 +7,49 @@ source LogO.sh
 # Tiempo de suenio parametrizable
 sleep=5
 
-#########################################
-# SOLO PARA TESTING, SACARLO EN PROD
-DIR_MAESTROS="MAESTROS"
-DIR_ARRIBOS="ARRIBOS"
-DIR_ACEPTADOS="ACEPTADOS"
-DIR_RECHAZADOS="RECHAZADOS"
-DIR_LOGS="LOGS"
-#########################################
 
 # 1-Verifico inicializacion del ambiente: si no estan las variables escribo el log y aborto
 
-if [ "${DIR_MAESTROS}" = "" ] 
+if [ "${MAESTROS}" = "" ] 
 then
 	log EjecDem Demonio ERR "No se puede iniciar el demonio. El directorio de archivos maestros no esta informado."
 	return
 fi
-if [ "${DIR_ARRIBOS}" = "" ] 
+if [ "${NOVEDADES}" = "" ] 
 then
 	log EjecDem Demonio ERR "No se puede iniciar el demonio. El directorio de arribos no esta informado."
 	return
 fi
-if [ "${DIR_ACEPTADOS}" = "" ]
+if [ "${ACEPTADOS}" = "" ]
 then
 	log EjecDem Demonio ERR "No se puede iniciar el demonio. El directorio de archivos aceptados no esta informado."
 	return
 fi
-if [ "${DIR_RECHAZADOS}" = "" ]
+if [ "${RECHAZADOS}" = "" ]
 then
 	log EjecDem Demonio ERR "No se puede iniciar el demonio. El directorio de archivos rechazados no esta informado."
 	return
 fi
-if [ "${DIR_LOGS}" = "" ]
+if [ "${LOGS}" = "" ]
 then
 	log EjecDem Demonio ERR "No se puede iniciar el demonio. El directorio de archivos de log no esta informado."
 	return
 fi
 
 # Si el process id esta vacio lo asigno
-if [ "${PID_DEMONIO}" = "" ]
-then
-	PID_DEMONIO=$$
-fi
+#if [ "${PID_DETECTO}" = "" ]
+#then
+#	PID_DETECTO=$$
+#fi
 
 
 LOGNAME=detecto.log
 export LOGNAME
 
 # Si no existe el archivo de log lo inicializo
-if [ ! -f $DIR_LOGS/$LOGNAME ]
+if [ ! -f $LOGS/$LOGNAME ]
 then
-	echo -n > $DIR_LOGS/$LOGNAME
+	echo -n > $LOGS/$LOGNAME
 fi
 
 # 2-Grabo en el log que arranco
@@ -87,10 +79,10 @@ function validarNombre()
 	mes=$(echo "$fbname" | cut -d- -f4)
 	paisistema=$pais"-"$sistema
 	
-	match=$( cut -d- -f1,3 "$DIR_MAESTROS/p-s.mae" | grep "${paisistema}")
+	match=$( cut -d- -f1,3 "$MAESTROS/p-s.mae" | grep "${paisistema}")
     	if [[ $match == "" ]]; then
 		log EjecDem Demonio INF "Archivo Rechazado: No existe el pais-sistema para $fbname." 
-		move "$DIR_ARRIBOS/$fbname" "$DIR_RECHAZADOS/$fbname"
+		move "$NOVEDADES/$fbname" "$RECHAZADOS/$fbname"
 		return
 	fi
 	# PAIS-SISTEMA VALIDO
@@ -98,13 +90,13 @@ function validarNombre()
 	if [[ $maskanio == "" ]];
 	then
 		log EjecDem Demonio INF "Archivo Rechazado: Anio invalido para $fbname."
-		move "$DIR_ARRIBOS/$fbname" "$DIR_RECHAZADOS/$fbname" 
+		move "$NOVEDADES/$fbname" "$RECHAZADOS/$fbname" 
 		return
 	fi
 	if [ $anio -gt 2018 ];
 	then
 		log EjecDem Demonio INF "Archivo Rechazado: Anio invalido para $fbname."
-		move "$DIR_ARRIBOS/$fbname" "$DIR_RECHAZADOS/$fbname" 
+		move "$NOVEDADES/$fbname" "$RECHAZADOS/$fbname" 
 		return
 	fi
 	# ANIO VALIDO
@@ -112,13 +104,13 @@ function validarNombre()
 	if [[ $maskmes == "" ]];
 	then
 		log EjecDem Demonio INF "Archivo Rechazado: Mes invalido para $fbname." 
-		move "$DIR_ARRIBOS/$fbname" "$DIR_RECHAZADOS/$fbname"
+		move "$NOVEDADES/$fbname" "$RECHAZADOS/$fbname"
 		return
 	fi
 	if [ $mes -le 0 -o $mes -gt 12 ];
 	then
 		log EjecDem Demonio INF "Archivo Rechazado: Mes invalido para $fbname." 
-		move "$DIR_ARRIBOS/$fbname" "$DIR_RECHAZADOS/$fbname"
+		move "$NOVEDADES/$fbname" "$RECHAZADOS/$fbname"
 		return
 	fi
 	# MES VALIDO
@@ -127,13 +119,13 @@ function validarNombre()
 	if ! [ -s $1 ];
 	then
 		log EjecDem Demonio INF "Archivo Rechazado: Archivo vacio $fbname." 
-		move "$DIR_ARRIBOS/$fbname" "$DIR_RECHAZADOS/$fbname"
+		move "$NOVEDADES/$fbname" "$RECHAZADOS/$fbname"
 		return
 	fi
 	# PASO TODAS LAS VALIDACIONES
 	# 9-Acepto archivo: mover a carpeta aceptados
 	log EjecDem Demonio INF "Archivo Aceptado: $fbname." 
-	move "$DIR_ARRIBOS/$fbname" "$DIR_ACEPTADOS/$fbname"
+	move "$NOVEDADES/$fbname" "$ACEPTADOS/$fbname"
 }
 
 # 4-Inicializo variable ciclo
@@ -146,31 +138,29 @@ do
 	log EjecDem Demonio INF "Ciclo nro: $ciclo"
 
 	# 5-Veo si hay novedades en el directorio de arribos
-	novedades=$(ls "${DIR_ARRIBOS}" -1 | wc -l)
+	novedades=$(ls "${NOVEDADES}" -1 | wc -l)
 
 	if [ $novedades \> 0 ]; 
 	then
 		# Si hay novedades
-		for filename in "${DIR_ARRIBOS}"/*; do
+		for filename in "${NOVEDADES}"/*; do
 			# 6-Valido nombres contra archivo maestro y condiciones de fecha
 			validarNombre $filename
 		done
 	fi
 
 	# 10-Si hay archivos aceptados llamo al interprete siempre y cuando no este corriendo
-	aceptados=$(ls "${DIR_ACEPTADOS}" -1 | wc -l)
+	aceptados=$(ls "${ACEPTADOS}" -1 | wc -l)
 	if [ $aceptados \> 0 ]; 
 	then
 		# Si no esta corriendo lo ejecuto
 		if [ -z "$PID_INTERPRETE" ] 
 		then
-			echo "Llamo al interprete"
-			# source InterpretO.sh &
-			# PID_INTERPRETE=$!
-			# log EjecDem Demonio INF "Interprete Iniciado: $PID_INTERPRETE." 
+			source InterpretO.sh &
+			PID_INTERPRETE=$!
+			log EjecDem Demonio INF "Interprete Iniciado: $PID_INTERPRETE." 
 		else
-			echo "Llamo al interprete en el proximo ciclo"
-			# log EjecDem Demonio INF "Invocacion del Interprete pospuesta para el siguiente ciclo." 
+			log EjecDem Demonio INF "Invocacion del Interprete pospuesta para el siguiente ciclo." 
 		fi
 	fi
 	
