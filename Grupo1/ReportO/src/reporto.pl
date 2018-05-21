@@ -46,7 +46,7 @@ sub Reporto {
             my ($ldl,$filtro_value) = @_;
             my @filtradoPorSistema = filtrarLdL({
                 'ldl' => $ldl,
-                'numeroDeCampo' => 5,
+                'numeroDeCampo' => 1,
                 'criteria' => sub {
                     my ($sistema) = @_;
                     if($sistema ne $filtro_value){

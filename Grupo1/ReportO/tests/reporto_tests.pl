@@ -39,7 +39,7 @@ my $tests = {
     'debeFiltrarArchivoMaestroPorSistema' => sub {
         my @maestro = $reporto->{'archivoMaestro'}();
         # putsLdL(@maestro);
-        my @maestroFiltrado = $reporto->{'filtrarPorSistemaDistinto'}(\@maestro, "MOR4");
+        my @maestroFiltrado = $reporto->{'filtrarPorSistemaDistinto'}(\@maestro, "6");
         # print("------------------------------------------------------------------\n");
         # putsLdL(@maestroFiltrado);
         ok(scalar(@maestroFiltrado) <= scalar(@maestro));
