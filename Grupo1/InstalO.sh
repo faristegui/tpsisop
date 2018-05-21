@@ -334,8 +334,8 @@ else
 	# Seteo nombres de directorios por default
 	dirEjecutables="bin"
 	dirMaestros="maestro"
-	dirEntrada="recibidos"
-	dirNovedadesAceptadas="novedades"
+	dirEntrada="novedades"
+	dirNovedadesAceptadas="aceptadas"
 	dirRechazados="rechazados"
 	dirProcesados="procesados"
 	dirReportes="reportes"
