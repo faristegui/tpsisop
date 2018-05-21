@@ -10,9 +10,25 @@ system("clear");
 if(($#ARGV + 1) == 0){
     useReporto(0);
 }elsif(defined($opcion) && $opcion eq '-a' && ($#ARGV + 1) >= 1){
-    print("AYUDA!\n");
+   ayuda();
 }elsif(defined($opcion) && $opcion eq '-g' && ($#ARGV + 1) >= 1){
     useReporto(1);
+}
+
+sub ayuda {
+     print("\n");
+     print(" USO:   ./start.pl -[opcion] [pais] [sistema] [desde] [hasta]\n");
+     print("\n");
+     print(" opcion:\n");
+     print("    a: Imprime este mensaje de ayuda.\n");
+     print("    g: Pone a ReportO en modo 'guardar'.\n");
+     print("\n");
+     print(" params:\n");
+     print("    [pais]:      Indica por cual pais filtrar.\n");
+     print("    [sistema]:   Indica por cual sistema filtrar.\n");
+     print("    [desde]:     Indica el inicio del rango de fechas por el cual filtrar.\n");
+     print("    [hasta]:     Indica el fin del rango de fechas por el cual filtrar.\n");
+     print("\n\n");
 }
 
 sub menu {
@@ -56,8 +72,8 @@ sub useReporto {
             print("Corriendo reportO en modo GUARDAR...\n");
             menu($guardar);
         }else{
-            menu($guardar);
             print("Corriendo reportO...\n");
+            menu($guardar);
         }
     }else{
         print("El sistema no se encuentra inicializado correctamente!\n");
