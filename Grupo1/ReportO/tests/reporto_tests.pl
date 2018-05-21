@@ -2,6 +2,7 @@
 use diagnostics; 
 use warnings;   
 use strict;
+use DateTime;
 use v5.18;
 use Test::More qw( no_plan ); # for the is() and isnt() functions
 require 'runner/tests_runner.pl';
@@ -37,8 +38,26 @@ my $tests = {
     },
     'debeFiltrarArchivoMaestroPorSistema' => sub {
         my @maestro = $reporto->{'archivoMaestro'}();
-        #$reporto->{'putsLdL'}(@maestro);
-        my @maestroFiltrado = $reporto->{'filtrarPorSistema'}(\@maestro, "A");
+        # putsLdL(@maestro);
+        my @maestroFiltrado = $reporto->{'filtrarPorSistemaDistinto'}(\@maestro, "MOR4");
+        # print("------------------------------------------------------------------\n");
+        # putsLdL(@maestroFiltrado);
+        ok(scalar(@maestroFiltrado) <= scalar(@maestro));
+    },
+    'debeFiltrarArchivoMaestroPorPais' => sub {
+        my @maestro = $reporto->{'archivoMaestro'}();
+        # putsLdL(@maestro);
+        my @maestroFiltrado = $reporto->{'filtrarPorPaisDistinto'}(\@maestro, "A");
+        # print("------------------------------------------------------------------\n");
+        # putsLdL(@maestroFiltrado);
+        ok(scalar(@maestroFiltrado) <= scalar(@maestro));
+    },
+    'debeFiltrarArchivoMaestroNoEnRangoDeFechas' => sub {
+        my @maestro = $reporto->{'archivoMaestro'}();
+        # putsLdL(@maestro);
+        my @maestroFiltrado = $reporto->{'filtrarPorNoEnRangoDeFechas'}(\@maestro, {'desde' => fromStringAFecha("03/11/2007"),'hasta' => fromStringAFecha("29/08/2008")});
+        # print("------------------------------------------------------------------\n");
+        # putsLdL(@maestroFiltrado);
         ok(scalar(@maestroFiltrado) <= scalar(@maestro));
     }
 };
