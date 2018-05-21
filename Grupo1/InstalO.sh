@@ -75,7 +75,7 @@ moverArchivos()
 	log "Copiado Archivo Ejecutable LogO.sh"
 	cp -f InicializadorO.sh $dirEjecutables/InicializadorO.sh
 	log "Copiado Archivo Ejecutable InicializadorO.sh"
-	cp ReportO/* $dirEjecutables
+	cp -r ./ReportO $dirEjecutables
 	log "Copiado Directorio Reporto"
 
 #Muevo los archivos de instalación a la carpeta de backup
@@ -87,15 +87,15 @@ moverArchivos()
 	log "Movido Archivo Maestro a InstallFiles T1.tab"
 	mv -f T2.tab InstallFiles/T2.tab
 	log "Movido Archivo Maestro a InstallFiles T2.tab"
-	mv -f T2.tab InstallFiles/DetectO.sh
+	mv -f DetectO.sh InstallFiles/DetectO.sh
 	log "Movido Archivo Ejecutable a InstallFiles DetectO.sh"
-	mv -f T2.tab InstallFiles/StopO.sh
+	mv -f StopO.sh InstallFiles/StopO.sh
 	log "Movido Archivo Ejecutable a InstallFiles StopO.sh"
-	mv -f T2.tab InstallFiles/LogO.sh
+	mv -f LogO.sh InstallFiles/LogO.sh
 	log "Movido Archivo Ejecutable a InstallFiles LogO.sh"
-	mv -f T2.tab InstallFiles/InicializadorO.sh
+	mv -f InicializadorO.sh InstallFiles/InicializadorO.sh
 	log "Movido Archivo Ejecutable a InstallFiles InicializadorO.sh"
-	cp ReportO/* InstallFiles
+	mv ./ReportO InstallFiles
 	log "Movido Directorio Reporto a InstallFiles"
 }
 
@@ -167,8 +167,8 @@ modoReparacion(){
 			cp "$line" "${carpetas[0]}"
 			log "Reparando archivos ejecutables. $line"
 		done <<<"$ejecutables"
-		cp InstallFiles/* ${carpetas[0]}
-		log "Copiado Directorio Reporto"
+		cp -r InstallFiles/ReportO ${carpetas[0]}
+		log "Copiado Directorio ReportO"
 		#Archivos maestros
 		maestros=$(find "InstallFiles" -type f -iname "*.mae" -o -iname "*.tab")
 		while read -r line
@@ -334,8 +334,8 @@ else
 	# Seteo nombres de directorios por default
 	dirEjecutables="bin"
 	dirMaestros="maestro"
-	dirEntrada="recibidos"
-	dirNovedadesAceptadas="novedades"
+	dirEntrada="novedades"
+	dirNovedadesAceptadas="aceptadas"
 	dirRechazados="rechazados"
 	dirProcesados="procesados"
 	dirReportes="reportes"
