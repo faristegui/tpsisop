@@ -69,6 +69,8 @@ moverArchivos()
 	log "Copiado Archivo Maestro T2.tab"
 	cp -f DetectO.sh $dirEjecutables/DetectO.sh
 	log "Copiado Archivo Ejecutable DetectO.sh"
+	cp -f DetectO.sh $dirEjecutables/log.sh
+	log "Copiado Archivo Ejecutable log.sh"
 	cp -f StopO.sh $dirEjecutables/StopO.sh
 	log "Copiado Archivo Ejecutable StopO.sh"
 	cp -f LogO.sh $dirEjecutables/LogO.sh
@@ -90,6 +92,8 @@ moverArchivos()
 	mv -f DetectO.sh InstallFiles/DetectO.sh
 	log "Movido Archivo Ejecutable a InstallFiles DetectO.sh"
 	mv -f StopO.sh InstallFiles/StopO.sh
+	log "Movido Archivo Ejecutable a InstallFiles log.sh"
+	mv -f StopO.sh InstallFiles/log.sh
 	log "Movido Archivo Ejecutable a InstallFiles StopO.sh"
 	mv -f LogO.sh InstallFiles/LogO.sh
 	log "Movido Archivo Ejecutable a InstallFiles LogO.sh"
