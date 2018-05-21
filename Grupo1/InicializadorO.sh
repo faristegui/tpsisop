@@ -18,8 +18,8 @@ while read linea; do
     case "$key" in
         ejecutables) export EJECUTABLES=$ruta;;
         maestros) export MAESTROS=$ruta;;
-        entrada) export RECIBIDOS=$ruta;;
-        aceptados) export NOVEDADES=$ruta;;
+        entrada) export NOVEDADES=$ruta;;
+        aceptados) export ACEPTADOS=$ruta;;
         rechazados) export RECHAZADOS=$ruta;;
         procesados) export PROCESADOS=$ruta;;
         reportes) export REPORTES=$ruta;;
@@ -33,7 +33,7 @@ while read linea; do
     fi
 done < "$GRUPO/dirconf/instalacion.config"
 echo $LOGS
-for x in EJECUTABLES MAESTROS RECIBIDOS NOVEDADES RECHAZADOS PROCESADOS LOGS; do
+for x in EJECUTABLES MAESTROS NOVEDADES ACEPTADOS RECHAZADOS PROCESADOS LOGS; do
     if [ ! -v $x ]; then
         echo "no esta $x en archivo de configuracion"
     elif [ ! -d ${!x} ]; then
@@ -44,7 +44,7 @@ done
 log "se crea la variable de ambiente DIRABUS"
 echo "se crea la variable de ambiente DIRABUS"
 export DIRABUS
-read -p $'Defina el directorio de búsqueda: Grupo03/' -ei dirabus DIRABUS
+read -p $'Defina el directorio de búsqueda: Grupo1/' -ei dirabus DIRABUS
 DIRABUS="$GRUPO/$DIRABUS"
 mkdir -p $DIRABUS
 echo -e "\e[1;32mDirectorio de búsqueda creado correctamente.\e[0m"
@@ -53,7 +53,8 @@ log "cambio de permisos en MAESTROS y EJECUTABLES"
 echo "cambio de permisos en MAESTROS y EJECUTABLES"
 find "$MAESTROS" -type f -exec chmod u+r {} +
 find "$EJECUTABLES" -type f -exec chmod u+x {} +
+find "$LOGS" -type f -exec chmod u+x {} +
 
-$EJECUTABLES/DEMONIO/DetectO.sh &
-export PID_DEMONIO=$!0
-echo "Demonio iniciado con id de proceso $PID_DEMONIO"
+$EJECUTABLES/DetectO.sh &
+export PID_DETECTO=$!0
+echo "Demonio iniciado con id de proceso $PID_DETECTO"
