@@ -57,9 +57,11 @@ La forma de cancelar por completo la instalacion es presionando una tecla distin
 
 Para iniciar el Demonio se debe haber ejecutado anteriormente el Inicializador dejando creadas las variables de ambiente.
 El proceso busca las novedades y las deja en las carpetas de aceptadas o rechazadas.
-En el caso que el archivo ya exista y haya sido procesado anteriormente, se mueve a la carpeta con el sufijo "-dup-DD-MM-YYYY-HH:MM:SS"
+En el caso que un archivo de novedades a procesar ya haya sido procesado anteriormente, se mueve a la carpeta destino con el sufijo "-dup-DD-MM-YYYY-HH:MM:SS"
 En el caso que haya archivos aceptados, se llama al Interprete siempre y cuando el mismo no esté corriendo.
 El log del demonio se trunca y deja las 50 últimas líneas si el archivo supera los 200kb
+
+Para detener la ejecución del demonio se debe ejecutar desde la terminal: "source StopO.sh"
 
 *********** Inicializador ***********
 
