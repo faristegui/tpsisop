@@ -52,7 +52,9 @@ then
 	$EJECUTABLES/DetectO.sh &
 	export PID_DETECTO=$!
 	echo "Demonio iniciado con id de proceso $PID_DETECTO"
+	log "Demonio iniciado con id de proceso $PID_DETECTO"
 
 else
 	echo "Demonio iniciado anteriormente con id de proceso $PID_DETECTO"
+	log "Demonio iniciado anteriormente con id de proceso $PID_DETECTO"
 fi
