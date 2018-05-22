@@ -249,7 +249,7 @@ instalacion()
 
 	echo -e "\nIngrese el nombre del directorio para los archivos procesados (Ej: ../$dirProcesados): "
 	read auxDir
-	contadorDirectorios=4
+	contadorDirectorios=5
 	validarDirectorio
 	log "Solicita Directorio Procesados / Respuesta: $auxDir"
 	if [ "$auxDir" != "" ] && [ "$dirValido" != "false" ]
@@ -259,7 +259,7 @@ instalacion()
 
 	echo -e "\nIngrese el nombre del directorio para los archivos de reportes (Ej: ../$dirReportes): "
 	read auxDir
-	contadorDirectorios=5
+	contadorDirectorios=6
 	validarDirectorio
 	log "Solicita Directorio Reportes / Respuesta: $auxDir"
 	if [ "$auxDir" != "" ] && [ "$dirValido" != "false" ]
@@ -269,7 +269,7 @@ instalacion()
 
 	echo -e "\nIngrese el nombre del directorio para los archivos de log (Ej: ../$dirLogs): "
 	read auxDir
-	contadorDirectorios=6
+	contadorDirectorios=7
 	validarDirectorio
 	log "Solicita Directorio Logs / Respuesta: $auxDir"
 	if [ "$auxDir" != "" ] && [ "$dirValido" != "false" ]
