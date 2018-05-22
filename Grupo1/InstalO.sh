@@ -336,7 +336,11 @@ instalacion()
 
 if [ "$parametro" = "-r" ]
 then
+	echo -e "\n****************** MODO REPARACION ******************"
+	log "Iniciado Modo Reparacion."
 	modoReparacion
+	echo -e "\nModo reparacion finalizado correctamente.\n"
+	log "Finalizado Modo Reparacion."
 else
 	validarPerl
 	# Seteo nombres de directorios por default
@@ -354,7 +358,7 @@ else
 	then 
 		#Existe una instalación
 		echo -e "¡Hay una instalación existente del sistema!\n\nSe iniciara el modo reparación."
-		log "Iniciado Modo Reparacion"
+		log "Iniciado Modo Reparacion en forma autoḿatica. (Existe una instalación en el sistema)"
 		modoReparacion
 		echo -e "\nModo reparacion finalizado correctamente."
 		log "Finalizado modo reparacion."
