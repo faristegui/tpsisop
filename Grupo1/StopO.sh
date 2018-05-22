@@ -5,4 +5,5 @@ then
 else
 	kill $PID_DETECTO
 	echo "Se elimino el proceso DetectO con PID: $PID_DETECTO"
+	$PID_DETECTO=""
 fi
