@@ -50,7 +50,7 @@ find "$LOGS" -type f -exec chmod u+x {} +
 if [ -z "$PID_DETECTO" ] 
 then
 	$EJECUTABLES/DetectO.sh &
-	export PID_DETECTO=$!0
+	export PID_DETECTO=$!
 	echo "Demonio iniciado con id de proceso $PID_DETECTO"
 
 else
