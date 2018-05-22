@@ -69,7 +69,7 @@ moverArchivos()
 	log "Copiado Archivo Maestro T2.tab"
 	cp -f DetectO.sh $dirEjecutables/DetectO.sh
 	log "Copiado Archivo Ejecutable DetectO.sh"
-	cp -f DetectO.sh $dirEjecutables/log.sh
+	cp -f log.sh $dirEjecutables/log.sh
 	log "Copiado Archivo Ejecutable log.sh"
 	cp -f StopO.sh $dirEjecutables/StopO.sh
 	log "Copiado Archivo Ejecutable StopO.sh"

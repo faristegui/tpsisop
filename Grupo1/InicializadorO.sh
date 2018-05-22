@@ -1,4 +1,4 @@
-LOGFILE=preparador
+LOGFILE=inicializadorO
 source log.sh
 
 GRUPO=$(pwd | sed "s-\(.*Grupo1\).*-\1-")
@@ -47,6 +47,12 @@ find "$MAESTROS" -type f -exec chmod u+r {} +
 find "$EJECUTABLES" -type f -exec chmod u+x {} +
 find "$LOGS" -type f -exec chmod u+x {} +
 
-$EJECUTABLES/DetectO.sh &
-export PID_DETECTO=$!0
-echo "Demonio iniciado con id de proceso $PID_DETECTO"
+if [ -z "$PID_DETECTO" ] 
+then
+	$EJECUTABLES/DetectO.sh &
+	export PID_DETECTO=$!0
+	echo "Demonio iniciado con id de proceso $PID_DETECTO"
+
+else
+	echo "Demonio iniciado anteriormente con id de proceso $PID_DETECTO"
+fi
