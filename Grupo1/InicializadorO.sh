@@ -32,7 +32,7 @@ while read linea; do
       reportar "Error de usuario, tiene que ser el mismo para todas rutas"
     fi
 done < "$GRUPO/dirconf/instalacion.config"
-echo $LOGS
+
 for x in EJECUTABLES MAESTROS NOVEDADES ACEPTADOS RECHAZADOS PROCESADOS LOGS; do
     if [ ! -v $x ]; then
         echo "no esta $x en archivo de configuracion"
