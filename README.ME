@@ -52,3 +52,14 @@ Cancelar instalación:
 Cuando se inicia una instalación y se completan todos los campos requeridos, el instalador pide una confirmación.
 Si el usuario decide no completar la instalación presionando la letra "N" o "n", el instalador se vuelve a iniciar con los parámetros definidos anteriormente.
 La forma de cancelar por completo la instalacion es presionando una tecla distinta de "S" o "N" en el pedido de confirmación.
+
+*********** Inicializador ***********
+
+Para correr el progrra se debe ir al directorio de ejecutables(ej: ../bin).
+- El script se llama InicializadorO.sh, para ejecutarse se escribe por terminal: "source InicializadorO.sh".
+- El programa cumple con las siguientes funciones:
+    . Chequea que los directorios de configuracón existan, de lo contrario el sistema no arranca.
+    . Instancia las variables globales que el sistema requiere.
+    . Se le otorgan los permisos correspondientes a los directorio Maestros(lectura) y Ejecutables(escritura).
+    . Se ejecuta el demonio siempre y cuando no haya uno previamente corriendo.
+    . Se muestra al usuario el Pid del demonio.
