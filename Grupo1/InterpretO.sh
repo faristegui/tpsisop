@@ -378,4 +378,4 @@ done
 #FIN RECORRIDO DE DIRECTORIO CON ARCHIVOS ACEPTADOS
 #echo 'El interprete proceso todos los archivos que habia disponibles'
 #exit 1
-#$PID_INTERPRETE=""
+PID_INTERPRETE=""
