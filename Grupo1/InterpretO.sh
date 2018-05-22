@@ -12,12 +12,17 @@ dirDup="dup"
 colisiones=0
 nombresSalida=("CTB_ESTADO" "PRES_ID" "MT_PRES" "MT_IMPAGO")
 nombresSalida+=("MT_INDE" "MT_INNODE" "MT_DEB" "MT_REST" "PRES_CLI_ID" "PRES_CLI")
-
-#"CTB_ANIO" "CTB_MES" "CTB_DIA" 
+ 
 
 ambienteinicializado(){
-
-	return 1;
+	
+	#if [ -z "$PID_DETECTO" ] 
+	#then
+	#	echo "El proceso DetectO no esta corriendo."
+	#	exit 1
+	#else
+		return 1
+	#fi
 }
 
 buscarIndice(){
@@ -32,7 +37,6 @@ buscarIndice(){
 	    	
 	        let CONT=CONT+1 
 	done
-	#return indice
 
 }
 
@@ -45,7 +49,6 @@ reemplazarSeparadorDecimal(){
 formatearFecha(){
 
 	valorFormato=${formatos[$indice]}
-	echo $valorFormato
 	valorCampo=${vec[$indice]}
 
 	case "${valorFormato:0:7}" in
@@ -75,7 +78,6 @@ nuevaLinea+=$separadorSalida$fecha$separadorSalida'usuario01'
 calcularMontoRestante(){
 
 	buscarIndice 'MT_PRES'
-	#Devuelve en el 
 	IFS="$separadorDec" read -ra mt_pres <<< "${vec[$indice]}"
 	buscarIndice 'MT_IMPAGO'
 	IFS="$separadorDec" read -ra mt_impago <<< "${vec[$indice]}"
@@ -86,25 +88,13 @@ calcularMontoRestante(){
 	buscarIndice 'MT_DEB'
 	IFS="$separadorDec" read -ra mt_deb <<< "${vec[$indice]}"
 	let mt_rest_entero=${mt_pres[0]}+${mt_impago[0]}+${mt_inde[0]}+${mt_innode[0]}-${mt_deb[0]}
-	#let mt_rest_dec=${mt_pres[1]}+${mt_impago[1]}+${mt_inde[1]}+${mt_innode[1]}-${mt_deb[1]}
-	#echo mt_rest_dec
 	mt_rest=$mt_rest_entero
-	#if [[ mt_rest_dec > 99 ]]; then
-
-	#	mt_rest=${#mt_rest_dec}
-
-	#else
-
-	#	mt_rest=$mt_rest_entero','$mt_rest_dec
-
-	#fi
 }
 
 darformatoSalida(){
 
 	CONTADOR=0
 	buscarIndice 'CTB_FE'
-	echo $indice
 	formatearFecha
 	while [ $CONTADOR -lt ${#nombresSalida[*]} ]; do
 
@@ -118,7 +108,6 @@ darformatoSalida(){
 					nuevaLinea+=$mt_rest
 				else
  					nuevaLinea+=$indice
-					echo $indice
 				fi 
 			else
 			formatoCampo=${formatos[$indice]}
@@ -129,18 +118,11 @@ darformatoSalida(){
 				;;
 				'c') reemplazarSeparadorDecimal ${vec[$indice]} 
 				;;
-				*)  echo 'la puta madre' 
-				;;
-			esac
-				
- 				#nuevaLinea+=${vec[$indice]}
-				echo $indice	
+			esac	
 	    	fi
 	        let CONTADOR=CONTADOR+1 
 	done
 	grabarFechaYusuario
-	
-	echo 'formatoSalida'
 }
 
 grabarRegistro(){
@@ -158,21 +140,11 @@ if [ ! -f $salida'/'$nombreArch ]; then
 	>$salida'/'$nombreArch
 
 fi
-#salida=$salida'/'$nombreArch
 
 separadorSalida=';';
 nuevaLinea=$sistema;
 
 darformatoSalida
-#j=0
-
-# reemplazar por el registroReal
-#while [  $j -lt ${#vec[*]} ];
-#do
-# nuevaLinea+=$separadorSalida
-# nuevaLinea+=${vec[j]}
-# let j=j+1
-#done 
 
 echo $nuevaLinea >>$salida'/'$nombreArch
 
@@ -217,24 +189,76 @@ fi
 
 evaluarAlfaNum(){
 
-	return 1;
+	campo="$1";
+
+	long=${#campo[*]}
+
+	posibles="\(([0-9]\|[a-z]\|[A-Z]\|' '\)*\)";
+
+	#es_val=$(echo "$campo" | sed "s/$posibles/Es valido/");
+
+	if [[ $es_val == 'Es valido' ]]; then
+		return 1;
+	else
+		return 1;
+	fi
 }
 
 evaluarNumero(){
 
-	return 1;
+	campo="$1";
+
+	long=${#campo[*]}
+
+	posibles="\([0-9]\{1,\}\)";
+
+	#es_val=$(echo "$campo" | sed "s/$posibles/Es valido/");
+
+	if [[ $es_val == 'Es valido' ]]; then
+		return 1;
+	else
+		return 1;
+	fi
+
 }
 
 evaluarFecha(){
 
-	return 1;
+	valorFormato=$2
+	valorCampo=$1
+	campoAEvaluar=''
+
+	case "${valorFormato:0:7}" in
+
+		'ddmmyy1') campoAEvaluar+=${valorCampo:6:4}'-'${valorCampo:3:2}'-'${valorCampo:0:2}
+		;;
+		'ddmmyy8') campoAEvaluar+=${valorCampo:4:4}'-'${valorCampo:2:2}'-'${valorCampo:0:2}
+		;;
+		'yymmdd1') campoAEvaluar+=${valorCampo:0:4}'-'${valorCampo:5:2}'-'${valorCampo:8:2}
+		;;
+		'yymmdd8') campoAEvaluar+=${valorCampo:0:4}'-'${valorCampo:4:2}'-'${valorCampo:6:2}
+		;;
+		
+	esac
+
+	#meses_31="\(\(0[1-9]\|[1-2][0-9]\|3[0-1]\)-\(01\|03\|05\|07\|08\|10\|12\)\)";
+	#meses_30="\(\(0[1-9]\|[1-2][0-9]\|30\)-\(04\|05\|09\|11\)\)";
+	#meses_29="\(\(0[1-9]\|[1-2][0-9]\)-\02\)";
+
+	#val_mes="\($meses_29\|$meses_30\|$meses_31\)";
+
+	#es_val=$(echo "$campoAEvaluar" | sed "s/$val_mes-[0-9][0-9][0-9][0-9]/Es valido/");
+	
+	if [[ ${#campoAEvaluar} -eq 10 ]]; then
+		return 1;
+	else
+		return 0;
+	fi
 }
 
 evaluarCampo(){
 
 	IFS=''
-	#identificarFormato
-	#echo $2
 	formatoCampo=$2
 	primerCaracter=${formatoCampo:0:1}
 	case "$primerCaracter" in
@@ -311,11 +335,12 @@ do
 	# FIN - rellena el contenido de dos vectores de campos (nombre y formatos)
 
 	# INICIO - recorrer archivos de prestamos
-
+	contadorRegistros=0
 	backIFS=$IFS
 	while IFS='' read -r linea || [[ -n "$linea" ]]; do
 		
 		vec=()
+		let contadorRegistros=contadorRegistros+1
 		IFS="$separador" read -ra vec <<< "$linea"
 		campoCorrecto=1;
 		CONTADOR=0;
@@ -334,12 +359,12 @@ do
 	    # si todos los campos del registro son validos guarda el registro en el archivo correspondiente
 	    if [ $campoCorrecto -eq 1 ]; then
 
-	    	echo 'registroOk'
 	    	grabarRegistro
+			log 'Archivo: '$i' - Registro nº'$contadorRegistros' correctamente cargado'
 
 	    else
 
-	    	log "registroRechazado"
+	    	log 'Archivo: '$i' - Registro nº'$contadorRegistros' rechazado por fecha'
 	    	echo 'registroRechazado'
 
 	    fi
