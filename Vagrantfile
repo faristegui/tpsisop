@@ -13,15 +13,14 @@ Vagrant.configure(2) do |config|
       
       echo "Updating system & installing essentials..."
       sudo apt-get update
-      sudo apt-get install build-essential
-      sudo apt-get install libdatetime-perl
-
+      sudo apt-get install -y build-essential
+      sudo apt-get install -y libdatetime-perl
 
       echo "export LC_CTYPE=en_US.UTF-8" >> /home/vagrant/.bashrc
       echo "export LC_ALL=en_US.UTF-8" >> /home/vagrant/.bashrc
 
       echo "Reading environment variables..."
-      if [ -d /vagrant/env/ ]; then  # Check if env/ directory exists
+      if [ -d /vagrant/env/ ]; then
         for path in /vagrant/env/*; do
           name=${path##*/}
           echo "Adding Env variables from $path"
