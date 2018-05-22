@@ -7,7 +7,7 @@
 
 	* Proceso de descarga y descompresión del sistema:
 
-1- Descargar el paquete Grupo1.tar.gz de la siguiente dirección ....
+1- Descargar el paquete Grupo1.tar.gz de la siguiente dirección https://github.com/faristegui/tpsisop/blob/master/Grupo1.tar.gz
 
 2- Mover el archivo descargado a una ubicación deseada
 
@@ -52,3 +52,40 @@ Cancelar instalación:
 Cuando se inicia una instalación y se completan todos los campos requeridos, el instalador pide una confirmación.
 Si el usuario decide no completar la instalación presionando la letra "N" o "n", el instalador se vuelve a iniciar con los parámetros definidos anteriormente.
 La forma de cancelar por completo la instalacion es presionando una tecla distinta de "S" o "N" en el pedido de confirmación.
+
+*********** Demonio ***********
+
+Para iniciar el Demonio se debe haber ejecutado anteriormente el Inicializador dejando creadas las variables de ambiente.
+El proceso busca las novedades y las deja en las carpetas de aceptadas o rechazadas.
+En el caso que un archivo de novedades a procesar ya haya sido procesado anteriormente, se mueve a la carpeta destino con el sufijo "-dup-DD-MM-YYYY-HH:MM:SS"
+En el caso que haya archivos aceptados, se llama al Interprete siempre y cuando el mismo no esté corriendo.
+El log del demonio se trunca y deja las 50 últimas líneas si el archivo supera los 200kb. Para esto se usa un archivo temporal llamado "templog"
+
+Para detener la ejecución del demonio se debe ejecutar desde la terminal: "source StopO.sh"
+
+*********** Inicializador ***********
+
+Para correr el programa se debe ir al directorio de ejecutables(ej: ../bin).
+- El script se llama InicializadorO.sh, para ejecutarse se escribe por terminal: "source InicializadorO.sh".
+- El programa cumple con las siguientes funciones:
+    . Chequea que los directorios de configuración existan, de lo contrario el sistema no arranca.
+    . Instancia las variables globales que el sistema requiere.
+    . Se le otorgan los permisos correspondientes a los directorio Maestros(lectura) y Ejecutables(escritura).
+    . Se ejecuta el demonio siempre y cuando no haya uno previamente corriendo.
+    . Se muestra al usuario el Pid del demonio.
+
+*********** ReportO ***********
+
+para correr el programa de reportes se debe ir al directorio de ejecutables/ReportO
+- El script se llama start.pl, para ejecutarse se escribe por terminal: "./start.pl".
+
+ USO:   ./start.pl -[opcion] [pais] [sistema] [desde] [hasta]
+ opcion:
+    a: Imprime este mensaje de ayuda.
+    g: Pone a ReportO en modo 'guardar'.
+
+ params:
+    [pais]:      Indica por cual pais filtrar.
+    [sistema]:   Indica por cual sistema filtrar.
+    [desde]:     Indica el inicio del rango de fechas por el cual filtrar.
+    [hasta]:     Indica el fin del rango de fechas por el cual filtrar.

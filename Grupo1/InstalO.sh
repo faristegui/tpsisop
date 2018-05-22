@@ -327,7 +327,7 @@ instalacion()
 	else
 		echo -e "¡¡ATENCION!!  La instalación ha sido cancelada. No se instalara el sistema.\n"		
 		log "Instalación cancelada por el usuario."
-		read -rsp $'Presione ENTER para cerrar el programa...\n'
+		read -rsp $'\nPresione ENTER para cerrar el programa...\n'
 		exit 1
 	fi
 }
@@ -336,7 +336,11 @@ instalacion()
 
 if [ "$parametro" = "-r" ]
 then
+	echo -e "\n****************** MODO REPARACION ******************"
+	log "Iniciado Modo Reparacion."
 	modoReparacion
+	echo -e "\nModo reparacion finalizado correctamente.\n"
+	log "Finalizado Modo Reparacion."
 else
 	validarPerl
 	# Seteo nombres de directorios por default
@@ -354,9 +358,9 @@ else
 	then 
 		#Existe una instalación
 		echo -e "¡Hay una instalación existente del sistema!\n\nSe iniciara el modo reparación."
-		log "Iniciado Modo Reparacion"
+		log "Iniciado Modo Reparacion en forma autoḿatica. (Existe una instalación en el sistema)"
 		modoReparacion
-		echo -e "\nModo reparacion finalizado correctamente."
+		echo -e "\nModo reparacion finalizado correctamente.\n"
 		log "Finalizado modo reparacion."
 	else
 		instalacion

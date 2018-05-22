@@ -60,7 +60,8 @@ sub menu {
         system("clear");
         exit;
     }else{
-        print("Comando Invalido!\n");
+        system("clear");
+        print("-> Comando Invalido!\n");
         menu($modo)
     }
 }
@@ -78,7 +79,9 @@ sub useReporto {
             menu($guardar);
         }
     }else{
+        print("------------------------------------------------------\n");
         print("El sistema no se encuentra inicializado correctamente!\n");
+        print("------------------------------------------------------\n");
         putsVariablesDeAmbiente();
     }
 }
