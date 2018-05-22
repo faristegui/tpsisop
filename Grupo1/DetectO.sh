@@ -7,6 +7,21 @@ source LogO.sh
 # Tiempo de suenio parametrizable
 sleep=5
 
+# Sin el directorio de logs no podemos arrancar
+if [ "${LOGS}" = "" ]
+then
+	echo "No se puede iniciar el demonio. El directorio de archivos de log no esta informado."
+	return
+fi
+
+LOGNAME=detecto.log
+export LOGNAME
+
+# Si no existe el archivo de log lo inicializo
+if [ ! -f $LOGS/$LOGNAME ]
+then
+	echo -n > $LOGS/$LOGNAME
+fi
 
 # 1-Verifico inicializacion del ambiente: si no estan las variables escribo el log y aborto
 
@@ -30,27 +45,12 @@ then
 	log EjecDem Demonio ERR "No se puede iniciar el demonio. El directorio de archivos rechazados no esta informado."
 	return
 fi
-if [ "${LOGS}" = "" ]
-then
-	log EjecDem Demonio ERR "No se puede iniciar el demonio. El directorio de archivos de log no esta informado."
-	return
-fi
 
 # Si el process id esta vacio lo asigno
 #if [ "${PID_DETECTO}" = "" ]
 #then
 #	PID_DETECTO=$$
 #fi
-
-
-LOGNAME=detecto.log
-export LOGNAME
-
-# Si no existe el archivo de log lo inicializo
-if [ ! -f $LOGS/$LOGNAME ]
-then
-	echo -n > $LOGS/$LOGNAME
-fi
 
 # 2-Grabo en el log que arranco
 log EjecDem Demonio INF "Se inicia el DetectO con pid $$."

@@ -26,16 +26,23 @@ sub Reporto {
     my $self = {
         'clase' => sub { 'ReportO' },
         'sistemaValido?' => sub {
-            $vm = $ENV{'ARCHIVO_MAESTRO_DIR'}; 
-            if(!($vm eq "")){
+            my $maestro_path = $ENV{'MAESTROS'};
+            my $ejecutables_path = $ENV{'EJECUTABLES'};
+            my $novedades_path = $ENV{'NOVEDADES'};
+            my $aceptados_path = $ENV{'ACEPTADOS'};   
+            my $rechazados_path = $ENV{'RECHAZADOS'};    
+            my $procesados_path = $ENV{'PROCESADOS'};
+            my $reportes_path = $ENV{'REPORTES'};
+            my $logs_path = $ENV{'LOGS'};     
+            if(defined($maestro_path) && defined($ejecutables_path) && defined($novedades_path) && defined($aceptados_path) && defined($rechazados_path) && defined($procesados_path) && defined($reportes_path) && defined($logs_path)){
                 return 1;
             }else{
                 return 0;
             }
         },
         'archivoMaestro' => sub {
-            my $maestro_path = $ENV{'ARCHIVO_MAESTRO_DIR'};
-            if(defined($maestro_path)){
+            my $maestro_path = $ENV{'MAESTROS'};
+            if(defined($maestro_path) && $maestro_path ne ""){
                my @maestro = readCSV({'path' => $maestro_path, 'separador' => ';'});
                return @maestro;
             }else{
