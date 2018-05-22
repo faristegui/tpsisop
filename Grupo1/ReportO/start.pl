@@ -68,8 +68,10 @@ sub menu {
 sub useReporto {
     my($guardar) = @_;
     if($reporto->{'sistemaValido?'}()){
+        @maestroFiltrado = filtrarMaestro($pais,$sistema,$desde,$hasta);
+        # putsLdL(@maestroFiltrado);
         if($guardar){   
-            print("Corriendo reportO en modo GUARDAR...\n");
+            print("Corriendo reportO en modo 'guardar'...\n");
             menu($guardar);
         }else{
             print("Corriendo reportO...\n");
@@ -81,6 +83,20 @@ sub useReporto {
     }
 }
 
+sub filtrarMaestro {
+    my ($pais,$sistema,$desde,$hasta) = @_;
+    @maestro = $reporto->{'archivoMaestro'}();
+    if(defined($pais)){
+        @maestro = $reporto->{'filtrarPorPaisDistinto'}(\@maestro, $pais);
+    }
+    if(defined($sistema)){
+        @maestro = $reporto->{'filtrarPorSistemaDistinto'}(\@maestro, $sistema);
+    }
+    if(defined($desde) && defined($hasta)){
+        @maestro = $reporto->{'filtrarPorNoEnRangoDeFechas'}(\@maestro, {'desde' => fromStringAFecha($desde),'hasta' => fromStringAFecha($hasta)});
+    }
+    return @maestro;
+}
 
 sub recomendacion {
     print("-> Se ha elegido la opcion 'Recomendacion'\n");
