@@ -72,6 +72,34 @@ nuevaLinea+=$separadorSalida$fecha$separadorSalida'usuario01'
 
 }
 
+calcularMontoRestante(){
+
+	buscarIndice 'MT_PRES'
+	#Devuelve en el 
+	IFS="$separadorDec" read -ra mt_pres <<< "${vec[$indice]}"
+	buscarIndice 'MT_IMPAGO'
+	IFS="$separadorDec" read -ra mt_impago <<< "${vec[$indice]}"
+	buscarIndice 'MT_INDE'
+	IFS="$separadorDec" read -ra mt_inde <<< "${vec[$indice]}"
+	buscarIndice 'MT_INNODE'
+	IFS="$separadorDec" read -ra mt_innode <<< "${vec[$indice]}"
+	buscarIndice 'MT_DEB'
+	IFS="$separadorDec" read -ra mt_deb <<< "${vec[$indice]}"
+	let mt_rest_entero=${mt_pres[0]}+${mt_impago[0]}+${mt_inde[0]}+${mt_innode[0]}-${mt_deb[0]}
+	#let mt_rest_dec=${mt_pres[1]}+${mt_impago[1]}+${mt_inde[1]}+${mt_innode[1]}-${mt_deb[1]}
+	#echo mt_rest_dec
+	mt_rest=$mt_rest_entero
+	#if [[ mt_rest_dec > 99 ]]; then
+
+	#	mt_rest=${#mt_rest_dec}
+
+	#else
+
+	#	mt_rest=$mt_rest_entero','$mt_rest_dec
+
+	#fi
+}
+
 darformatoSalida(){
 
 	CONTADOR=0
@@ -86,18 +114,7 @@ darformatoSalida(){
 
 				if [ ${nombresSalida[CONTADOR]} == "MT_REST" ]; then
 
-					buscarIndice 'MT_PRES'
-					local mt_pres=$(echo "${vec[$indice]}" | tr $separadorDec ",");
-					buscarIndice 'MT_IMPAGO'
-					local mt_impago=$(echo "${vec[$indice]}" | tr $separadorDec ",");
-					buscarIndice 'MT_INDE'
-					local mt_inde=$(echo "${vec[$indice]}" | tr $separadorDec ",");
-					buscarIndice 'MT_INNODE'
-					local mt_innode=$(echo "${vec[$indice]}" | tr $separadorDec ",");
-					buscarIndice 'MT_DEB'
-					local mt_deb=$(echo "${vec[$indice]}" | tr $separadorDec ",");
-					#mt_rest=$mt_pres+$mt_impago+$mt_inde+$mt_innode-$mt_deb
-					mt_rest=0
+					calcularMontoRestante
 					nuevaLinea+=$mt_rest
 				else
  					nuevaLinea+=$indice
