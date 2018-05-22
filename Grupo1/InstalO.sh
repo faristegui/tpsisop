@@ -75,6 +75,8 @@ moverArchivos()
 	log "Copiado Archivo Ejecutable StopO.sh"
 	cp -f LogO.sh $dirEjecutables/LogO.sh
 	log "Copiado Archivo Ejecutable LogO.sh"
+	cp -f InterpretO.sh $dirEjecutables/InterpretO.sh
+	log "Copiado Archivo Ejecutable InterpretO.sh"
 	cp -f InicializadorO.sh $dirEjecutables/InicializadorO.sh
 	log "Copiado Archivo Ejecutable InicializadorO.sh"
 	cp -r ./ReportO $dirEjecutables
@@ -97,6 +99,8 @@ moverArchivos()
 	log "Movido Archivo Ejecutable a InstallFiles StopO.sh"
 	mv -f LogO.sh InstallFiles/LogO.sh
 	log "Movido Archivo Ejecutable a InstallFiles LogO.sh"
+	mv -f InterpretO.sh InstallFiles/InterpretO.sh
+	log "Movido Archivo Ejecutable a InstallFiles InterpretO.sh"
 	mv -f InicializadorO.sh InstallFiles/InicializadorO.sh
 	log "Movido Archivo Ejecutable a InstallFiles InicializadorO.sh"
 	mv ./ReportO InstallFiles
