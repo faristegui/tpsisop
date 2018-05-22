@@ -36,3 +36,19 @@ Sin embargo, el modo de reparación, se puede  ejecutar agregando el parámetro 
 En el directorio Grupo1 se crean todos los directorios que definio el usuario en la instalación.
 Además se crea el directorio InstallFiles que contiene los archivos de ejecución, para una posible recuperación del sistema en caso de errores.
 Otro directorio generado es el dirconf, que contiene un archivo instalación.config, en el que se guarda toda la información de la instalación.
+
+Hipotesis:
+
+*********** Instalador ***********
+
+Modo reparación (Automático):
+
+Si se inicia el instalador sin utilizar el parámetro "-r", se verifica que no haya una instalación existente.
+En caso de existir una instalación en esa ubicación (Verifica que el archivo dirconf/instalacion.config exista), se activa automáticamente el modo reparación.
+Este modo recupera de la carpeta InstallFiles los archivos de instalacion necesarios y los ubica nuevamente en las carpetas correspondientes a la instalación anterior definida por el usuario.
+
+Cancelar instalación:
+
+Cuando se inicia una instalación y se completan todos los campos requeridos, el instalador pide una confirmación.
+Si el usuario decide no completar la instalación presionando la letra "N" o "n", el instalador se vuelve a iniciar con los parámetros definidos anteriormente.
+La forma de cancelar por completo la instalacion es presionando una tecla distinta de "S" o "N" en el pedido de confirmación.
