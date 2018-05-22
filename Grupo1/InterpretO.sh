@@ -1,7 +1,7 @@
 #! /usr/bin/env bash	
 
 source log.sh
-LOGFILE="interpretO.log";
+LOGFILE="interpretO.log"
 directorioActual="$EJECUTABLES"
 
 tablaCampos="$MAESTROS/T2.tab"
@@ -10,16 +10,119 @@ entrada="$ACEPTADOS"
 salida="$PROCESADOS"
 dirDup="dup"
 colisiones=0
+nombresSalida=("CTB_ESTADO" "PRES_ID" "MT_PRES" "MT_IMPAGO")
+nombresSalida+=("MT_INDE" "MT_INNODE" "MT_DEB" "MT_REST" "PRES_CLI_ID" "PRES_CLI")
 
-
+#"CTB_ANIO" "CTB_MES" "CTB_DIA" 
 
 ambienteinicializado(){
 
 	return 1;
 }
 
+buscarIndice(){
+
+	CONT=0
+	indice=99
+	while [ $CONT -lt ${#nombres_campos[*]} ]; do
+
+			if [[ $1 == ${nombres_campos[CONT]} ]]; then
+				indice=$CONT
+			fi
+	    	
+	        let CONT=CONT+1 
+	done
+	#return indice
+
+}
+
+reemplazarSeparadorDecimal(){
+
+	valorModif=$(echo "$1" | tr $separadorDec ",");
+	nuevaLinea+=$valorModif
+}
+
+formatearFecha(){
+
+	valorFormato=${formatos[$indice]}
+	echo $valorFormato
+	valorCampo=${vec[$indice]}
+
+	case "${valorFormato:0:7}" in
+
+		'ddmmyy1') nuevaLinea+=$separadorSalida${valorCampo:6:4}$separadorSalida${valorCampo:3:2}$separadorSalida${valorCampo:0:2}
+		;;
+		'ddmmyy8') nuevaLinea+=$separadorSalida${valorCampo:4:4}$separadorSalida${valorCampo:2:2}$separadorSalida${valorCampo:0:2}
+		;;
+		'yymmdd1') nuevaLinea+=$separadorSalida${valorCampo:0:4}$separadorSalida${valorCampo:5:2}$separadorSalida${valorCampo:8:2}
+		;;
+		'yymmdd8') nuevaLinea+=$separadorSalida${valorCampo:0:4}$separadorSalida${valorCampo:4:2}$separadorSalida${valorCampo:6:2}
+		;;
+		*) nuevaLinea+=$separadorSalida'hola'$separadorSalida'hola'$separadorSalida'hola'
+		;;
+	esac
+
+}
+
+grabarFechaYusuario(){
+
+fecha=($(date "+%d/%m/%Y"))
+
+nuevaLinea+=$separadorSalida$fecha$separadorSalida'usuario01'
+
+}
+
 darformatoSalida(){
 
+	CONTADOR=0
+	buscarIndice 'CTB_FE'
+	echo $indice
+	formatearFecha
+	while [ $CONTADOR -lt ${#nombresSalida[*]} ]; do
+
+			buscarIndice ${nombresSalida[CONTADOR]}
+			nuevaLinea+=$separadorSalida
+			if [ $indice -eq 99 ]; then
+
+				if [ ${nombresSalida[CONTADOR]} == "MT_REST" ]; then
+
+					buscarIndice 'MT_PRES'
+					local mt_pres=$(echo "${vec[$indice]}" | tr $separadorDec ",");
+					buscarIndice 'MT_IMPAGO'
+					local mt_impago=$(echo "${vec[$indice]}" | tr $separadorDec ",");
+					buscarIndice 'MT_INDE'
+					local mt_inde=$(echo "${vec[$indice]}" | tr $separadorDec ",");
+					buscarIndice 'MT_INNODE'
+					local mt_innode=$(echo "${vec[$indice]}" | tr $separadorDec ",");
+					buscarIndice 'MT_DEB'
+					local mt_deb=$(echo "${vec[$indice]}" | tr $separadorDec ",");
+					#mt_rest=$mt_pres+$mt_impago+$mt_inde+$mt_innode-$mt_deb
+					mt_rest=0
+					nuevaLinea+=$mt_rest
+				else
+ 					nuevaLinea+=$indice
+					echo $indice
+				fi 
+			else
+			formatoCampo=${formatos[$indice]}
+			primerCaracter=${formatoCampo:0:1}
+			case "$primerCaracter" in
+			
+				'$') nuevaLinea+=${vec[$indice]} 
+				;;
+				'c') reemplazarSeparadorDecimal ${vec[$indice]} 
+				;;
+				*)  echo 'la puta madre' 
+				;;
+			esac
+				
+ 				#nuevaLinea+=${vec[$indice]}
+				echo $indice	
+	    	fi
+	        let CONTADOR=CONTADOR+1 
+	done
+	grabarFechaYusuario
+	
 	echo 'formatoSalida'
 }
 
@@ -40,19 +143,19 @@ if [ ! -f $salida'/'$nombreArch ]; then
 fi
 #salida=$salida'/'$nombreArch
 
-darformatoSalida
-
 separadorSalida=';';
-nuevaLinea=$codigo_pais$separadorSalida$sistema;
-j=0
+nuevaLinea=$sistema;
+
+darformatoSalida
+#j=0
 
 # reemplazar por el registroReal
-while [  $j -lt ${#vec[*]} ];
-do
- nuevaLinea+=$separadorSalida
- nuevaLinea+=${vec[j]}
- let j=j+1
-done 
+#while [  $j -lt ${#vec[*]} ];
+#do
+# nuevaLinea+=$separadorSalida
+# nuevaLinea+=${vec[j]}
+# let j=j+1
+#done 
 
 echo $nuevaLinea >>$salida'/'$nombreArch
 
@@ -116,7 +219,6 @@ evaluarCampo(){
 	#identificarFormato
 	#echo $2
 	formatoCampo=$2
-	#echo $formatoCampo
 	primerCaracter=${formatoCampo:0:1}
 	case "$primerCaracter" in
 	
@@ -232,4 +334,6 @@ do
 	# FIN - recorrer archivo de prestamos
 done
 #FIN RECORRIDO DE DIRECTORIO CON ARCHIVOS ACEPTADOS
-#grabarRegistro
+#echo 'El interprete proceso todos los archivos que habia disponibles'
+#exit 1
+#$PID_INTERPRETE=""
