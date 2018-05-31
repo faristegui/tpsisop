@@ -70,7 +70,7 @@ sub useReporto {
     my($guardar) = @_;
     if($reporto->{'sistemaValido?'}()){
         @maestroFiltrado = filtrarMaestro($pais,$sistema,$desde,$hasta);
-        # putsLdL(@maestroFiltrado);
+        putsLdL(@maestroFiltrado);
         if($guardar){   
             print("Corriendo reportO en modo 'guardar'...\n");
             menu($guardar);

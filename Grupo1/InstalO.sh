@@ -2,9 +2,13 @@
 
 parametro=$1
 GRUPO=$PWD
-
 log() {
-    echo "$GRUPO-$USER-$@-"[$(date "+%Y-%m-%d %H:%M")] >> "install.log"
+	if [ "$2" != "" ]
+	then
+		echo "$GRUPO-$USER-$1-"[$(date "+%Y-%m-%d %H:%M")] >> "$2/install.log"
+	else
+		echo "$GRUPO-$USER-$1-"[$(date "+%Y-%m-%d %H:%M")] >> "install.log"
+	fi
 }
 
 crearConfig()
@@ -138,7 +142,8 @@ validarDirectorio()
 	while read -r line
 	do
 		if [ ! -d "$line" ]; then
-			if [ "$auxDir" = "$line" ]; then
+			if [ "$auxDir" = "$line" ] && [ "$auxDir" != "" ]
+			then
 				echo -e "El nombre $auxDir ya existe. (Se utilizara el nombre asignado por defecto)\n"
 				dirValido=false
 				
@@ -153,40 +158,44 @@ modoReparacion(){
 	if [ -f "$GRUPO/dirconf/instalacion.config" ]; then
 		carpetasACrear=$(cut -d- -f 2 "dirconf/instalacion.config")
 		contador=0
-		
+	
 		echo -e "\n\nDirectorios de instalación:\n\n"
 		while read -r line
 	  		do
 			carpetas[$contador]="$line"
 
-			echo ${carpetas[$contador]}			
+			echo ${carpetas[$contador]}
+			
+			carpeta=${carpetas[$contador]}	
 
 			if [ ! -d "$line" ]; then
 				mkdir -p "$line"
-				log "Reparando directorio $line"
 			fi
 			contador+=1
 		done <<<"$carpetasACrear"
+
+		log "Iniciado Modo reparación." "$carpeta"
 
 		#Archivos ejecutables
 		ejecutables=$(find "InstallFiles" -type f -iname "*.sh" -o -iname "*.pl")
 		while read -r line
 		do
 			cp "$line" "${carpetas[0]}"
-			log "Reparando archivos ejecutables. $line"
+			log "Reparando archivos ejecutables. $line" "$carpeta"
 		done <<<"$ejecutables"
 		cp -r InstallFiles/ReportO ${carpetas[0]}
-		log "Copiado Directorio ReportO"
+		log "Copiado Directorio ReportO" "$carpeta"
 		#Archivos maestros
 		maestros=$(find "InstallFiles" -type f -iname "*.mae" -o -iname "*.tab")
 		while read -r line
 		do
 			cp "$line" "${carpetas[1]}"
-			log "Reparando archivos maestros. $line"
+			log "Reparando archivos maestros. $line" "$carpeta"
 		done <<<"$maestros"
+		log "Finalizado Modo reparación." "$carpeta"
   	else
     		echo "No hay instalacion previa, nada para reparar."
-		log "Modo reparacion finalizado. No hay instalación para reparar."
+		log "Modo reparacion finalizado. No hay instalación para reparar." "$carpeta"
   	fi
 }
 
@@ -337,10 +346,8 @@ instalacion()
 if [ "$parametro" = "-r" ]
 then
 	echo -e "\n****************** MODO REPARACION ******************"
-	log "Iniciado Modo Reparacion."
 	modoReparacion
 	echo -e "\nModo reparacion finalizado correctamente.\n"
-	log "Finalizado Modo Reparacion."
 else
 	validarPerl
 	# Seteo nombres de directorios por default
@@ -358,10 +365,8 @@ else
 	then 
 		#Existe una instalación
 		echo -e "¡Hay una instalación existente del sistema!\n\nSe iniciara el modo reparación."
-		log "Iniciado Modo Reparacion en forma autoḿatica. (Existe una instalación en el sistema)"
 		modoReparacion
 		echo -e "\nModo reparacion finalizado correctamente.\n"
-		log "Finalizado modo reparacion."
 	else
 		instalacion
 		mv -f instalacion.config dirconf/instalacion.config
