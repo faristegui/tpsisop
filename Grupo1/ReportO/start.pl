@@ -80,7 +80,7 @@ sub useReporto {
         }
     }else{
         print("------------------------------------------------------\n");
-        print("El sistema no se encuentra inicializado correctamente!\n");
+        print(" El sistema no se encuentra inicializado correctamente!\n");
         print("------------------------------------------------------\n");
         putsVariablesDeAmbiente();
     }
@@ -88,7 +88,7 @@ sub useReporto {
 
 sub filtrarMaestro {
     my ($pais,$sistema,$desde,$hasta) = @_;
-    @maestro = $reporto->{'archivoMaestro'}();
+    my @maestro = $reporto->{'archivoMaestro'}();
     if(defined($pais)){
         @maestro = $reporto->{'filtrarPorPaisDistinto'}(\@maestro, $pais);
     }
@@ -103,6 +103,8 @@ sub filtrarMaestro {
 
 sub recomendacion {
     print("-> Se ha elegido la opcion 'Recomendacion'\n");
+    my @procesados = $reporto->{'archivosProcesadosPais'}("A");
+    putsLdL(@procesados);
 }
 
 sub divergenciaEnPorcentaje {

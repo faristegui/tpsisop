@@ -46,7 +46,22 @@ sub Reporto {
                my @maestro = readCSV({'path' => $maestro_path, 'separador' => ';'});
                return @maestro;
             }else{
-                die "El archivo maestro esta indefinido, chequee las variables de ambiente\n";
+                die "El directorio 'maestros' esta indefinido, chequee las variables de ambiente\n";
+            }
+        },
+        'archivosProcesadosPais' => sub {
+            my ($pais) = @_;
+            my $procesados_path = $ENV{'PROCESADOS'};
+            my @procesados = ();
+            if(defined($maestro_path) && $maestro_path ne ""){
+                $archivos = $procesados_path . "/*.$pais";
+                foreach $archivo (<$archivos>) {
+                   my @procesado = readCSV({'path' => $procesados_path . "/" . $archivo , 'separador' => ';'});
+                   push(@procesados,@procesado);
+                }
+                return @procesados;
+            }else{
+                die "El directorio 'procesados' esta indefinido, chequee las variables de ambiente\n";
             }
         },
         'filtrarPorSistemaDistinto' => sub {
