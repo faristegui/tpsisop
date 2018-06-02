@@ -6,22 +6,22 @@ my ($opcion,$pais, $sistema,$desde,$hasta) = @ARGV;
 my $reporto = &Reporto();
 system("clear");
 
-if(!defined($pais)){
-   print("Por favor defina un pais\n");
-   exit;
-}
-
-if(!defined($sistema)){
-   print("Por favor defina un sistemab\n");
-   exit;
-}
-
-if(defined($opcion) && $opcion eq '-a' && ($#ARGV + 1) >= 1){
+if(defined($opcion) && $opcion eq '-a'){
    ayuda();
-}elsif(defined($opcion) && $opcion eq '-g' && ($#ARGV + 1) >= 1){
-    useReporto(1);
 }else{
-    useReporto(0);
+    if(!defined($pais)){
+        print("Por favor defina un pais\n");
+        exit;
+    }
+    if(!defined($sistema)){
+        print("Por favor defina un sistema\n");
+        exit;
+    }
+    if(defined($opcion) && $opcion eq '-g' && ($#ARGV + 1) >= 1){
+        useReporto(1);
+    }else{
+        useReporto(0); 
+    }
 }
 
 sub ayuda {
@@ -31,6 +31,7 @@ sub ayuda {
      print(" opcion:\n");
      print("    a: Imprime este mensaje de ayuda.\n");
      print("    g: Pone a ReportO en modo 'guardar'.\n");
+     print("    *: Pone a ReportO en modo 'normal'.\n");
      print("\n");
      print(" params:\n");
      print("    [pais]:      Indica por cual pais filtrar.\n");
@@ -42,20 +43,20 @@ sub ayuda {
 
 sub menu {
     my ($guardar) = @_;
-    print("-------------------------------------\n");
+    print("--------------------------------------------------------------------------------------------------------------------\n");
     print(" [1] Recomendacion\n");
     print(" [2] Divergencia % \n");
     print(" [3] Divergencia \$ \n");
     print(" [9] Limpiar consola\n");
     print(" [0] Salir \n");
-    print("-------------------------------------\n");
+    print("--------------------------------------------------------------------------------------------------------------------\n");
     print("modo: $opcion | ") if(defined($opcion));
     print("pais: $pais | ") if(defined($pais));
     print("sistema: $sistema | ") if(defined($pais));
     print("desde: $desde | ") if(defined($desde));
     print("hasta: $hasta ") if(defined($hasta));
     print("\n");
-    print("-------------------------------------\n");
+    print("--------------------------------------------------------------------------------------------------------------------\n");
     my $opcion = <STDIN>;
     if($opcion == 1){
         system("clear");
