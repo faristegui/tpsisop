@@ -1,3 +1,5 @@
+use DateTime;
+
 sub Reporto {
     sub readCSV {
         my ($params) = @_;
@@ -104,6 +106,17 @@ sub Reporto {
                 }
             }
             return @comparaciones;
+        },
+        'escribirReporte' => sub {
+            my ($comparaciones,$pais) = @_;
+            my $nombre_reporte = "comparado.$pais";
+            my $nuevo_reporte_path = $ENV{'REPORTES'} . "/$nombre_reporte";
+            open(my $data, '>>', $nuevo_reporte_path ) or die "No se pudo escribir reporte: $nuevo_reporte_path'\n";
+            foreach my $comparacion (@{$comparaciones}) {
+               print $data join(";",@$comparacion) . "\n";    
+            }
+            close($data);
+            return $nombre_reporte;
         },
         'filtrarPorSistemaDistinto' => sub {
             my ($ldl,$filtro_value) = @_;

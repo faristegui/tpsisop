@@ -54,7 +54,8 @@ sub menu {
         system("clear");
         @resultado = recomendacion();  
         if($guardar){
-
+            $resultado_archivo_nombre = $reporto->{'escribirReporte'}(\@resultado,$pais);
+            print("El reporte ha sido guardado con nombre: $resultado_archivo_nombre\n");
         }else{
             putsLdL(@resultado);
         }      
