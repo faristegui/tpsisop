@@ -40,8 +40,8 @@ sub Reporto {
                 return 0;
             }
         },
-        'archivoMaestro' => sub {
-            my $maestro_path = $ENV{'MAESTROS'};
+        'archivoMaestroPPI' => sub {
+            my $maestro_path = $ENV{'MAESTROS'} . "/PPI.mae";
             if(defined($maestro_path) && $maestro_path ne ""){
                my @maestro = readCSV({'path' => $maestro_path, 'separador' => ';'});
                return @maestro;
@@ -51,18 +51,59 @@ sub Reporto {
         },
         'archivosProcesadosPais' => sub {
             my ($pais) = @_;
-            my $procesados_path = $ENV{'PROCESADOS'};
+            my $procesados_path = $ENV{'PROCESADOS'} . "/*.$pais";
             my @procesados = ();
-            if(defined($maestro_path) && $maestro_path ne ""){
-                $archivos = $procesados_path . "/*.$pais";
-                foreach $archivo (<$archivos>) {
-                   my @procesado = readCSV({'path' => $procesados_path . "/" . $archivo , 'separador' => ';'});
+            if(defined($procesados_path) && $procesados_path ne ""){
+                foreach $archivo (glob $procesados_path) {
+                   my @procesado = readCSV({'path' => $archivo , 'separador' => ';'});
                    push(@procesados,@procesado);
                 }
                 return @procesados;
             }else{
                 die "El directorio 'procesados' esta indefinido, chequee las variables de ambiente\n";
             }
+        },
+        'comparar' => sub {
+            my @maestro = @{$_[0]};
+            my @prestamos_pais = @{$_[1]};
+            my @comparaciones = ();
+            foreach my $reg_maestro (@maestro) {
+                s/,/./g for @$reg_maestro;
+                # print("reg_maestro\n");
+                # putsLista(@$reg_maestro);
+                my $monto_restante_maestro = @$reg_maestro[9] + @$reg_maestro[10] + @$reg_maestro[11] + @$reg_maestro[12];
+                # print("Monto restante maestro: $monto_restante_maestro\n");
+                foreach my $reg_prestamos_pais (@prestamos_pais) {
+                    s/,/./g for @$reg_prestamos_pais;
+                    my $a = @$reg_maestro[3];
+                    my $b = @$reg_prestamos_pais[2];
+                    if((@$reg_maestro[7] eq @$reg_prestamos_pais[5]) && (@$reg_maestro[2] eq @$reg_prestamos_pais[1]) && (@$reg_maestro[3] eq @$reg_prestamos_pais[2])){
+                        # print("reg_prestamos\n");
+                        # putsLista(@$reg_prestamos_pais);
+                        my $monto_restante_prestamos_pais = @$reg_prestamos_pais[5] + @$reg_prestamos_pais[7] + @$reg_prestamos_pais[8] + @$reg_prestamos_pais[9];
+                        # print("Monto restante prestamos: $monto_restante_prestamos_pais\n");
+                        my $diff_montos = $monto_restante_maestro - $monto_restante_prestamos_pais;
+                        if((@$reg_maestro[5] eq "SMOR") && (@$reg_prestamos_pais[4] ne "SMOR")){
+                            my $recomendacion = "RECAL";
+                            my @comparacion = (@$reg_maestro[0],@$reg_maestro[1],@$reg_maestro[7],$recomendacion,@$reg_maestro[5],@$reg_prestamos_pais[4],$monto_restante_maestro,$monto_restante_prestamos_pais,$diff_montos,@$reg_maestro[2],@$reg_maestro[3],@$reg_maestro[4],@$reg_prestamos_pais[3]);
+                            # putsLista(@comparacion);
+                            push(@comparaciones,[@comparacion]);
+                        }elsif($monto_restante_maestro < $monto_restante_prestamos_pais){
+                            my $recomendacion = "RECAL";                        
+                            my @comparacion = (@$reg_maestro[0],@$reg_maestro[1],@$reg_maestro[7],$recomendacion,@$reg_maestro[5],@$reg_prestamos_pais[4],$monto_restante_maestro,$monto_restante_prestamos_pais,$diff_montos,@$reg_maestro[2],@$reg_maestro[3],@$reg_maestro[4],@$reg_prestamos_pais[3]);
+                            # putsLista(@comparacion);                                
+                            push(@comparaciones,[@comparacion]);
+                        }else{
+                            my $recomendacion = "NO-RECAL";
+                            my @comparacion = (@$reg_maestro[0],@$reg_maestro[1],@$reg_maestro[7],$recomendacion,@$reg_maestro[5],@$reg_prestamos_pais[4],$monto_restante_maestro,$monto_restante_prestamos_pais,$diff_montos,@$reg_maestro[2],@$reg_maestro[3],@$reg_maestro[4],@$reg_prestamos_pais[3]);
+                            # putsLista(@comparacion);                            
+                            push(@comparaciones,[@comparacion]);
+                        }
+                        last;
+                    }
+                }
+            }
+            return @comparaciones;
         },
         'filtrarPorSistemaDistinto' => sub {
             my ($ldl,$filtro_value) = @_;

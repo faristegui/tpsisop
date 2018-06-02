@@ -4,20 +4,29 @@ require 'reporto.pl';
 
 my ($opcion,$pais, $sistema,$desde,$hasta) = @ARGV;
 my $reporto = &Reporto();
-
 system("clear");
 
-if(($#ARGV + 1) == 0){
-    useReporto(0);
-}elsif(defined($opcion) && $opcion eq '-a' && ($#ARGV + 1) >= 1){
+if(!defined($pais)){
+   print("Por favor defina un pais\n");
+   exit;
+}
+
+if(!defined($sistema)){
+   print("Por favor defina un sistemab\n");
+   exit;
+}
+
+if(defined($opcion) && $opcion eq '-a' && ($#ARGV + 1) >= 1){
    ayuda();
 }elsif(defined($opcion) && $opcion eq '-g' && ($#ARGV + 1) >= 1){
     useReporto(1);
+}else{
+    useReporto(0);
 }
 
 sub ayuda {
      print("\n");
-     print(" USO:   ./start.pl -[opcion] [pais] [sistema] [desde] [hasta]\n");
+     print(" USO:   ./start.pl -[opcion] [pais]* [sistema]* ([desde] [hasta])\n");
      print("\n");
      print(" opcion:\n");
      print("    a: Imprime este mensaje de ayuda.\n");
@@ -32,7 +41,7 @@ sub ayuda {
 }
 
 sub menu {
-    my ($modo) = @_;
+    my ($guardar) = @_;
     print("-------------------------------------\n");
     print(" [1] Recomendacion\n");
     print(" [2] Divergencia % \n");
@@ -43,26 +52,31 @@ sub menu {
     my $opcion = <STDIN>;
     if($opcion == 1){
         system("clear");
-        recomendacion();        
-        menu($modo);
+        @resultado = recomendacion();  
+        if($guardar){
+
+        }else{
+            putsLdL(@resultado);
+        }      
+        menu($guardar);
     }elsif($opcion == 2){
         system("clear");
         divergenciaEnPorcentaje();
-        menu($modo);
+        menu($guardar);
     }elsif($opcion == 3){
         system("clear");
         divergenciaEnPesos();
-        menu($modo);
+        menu($guardar);
     }elsif($opcion == 9){
         system("clear");
-        menu($modo);
-    }elsif($opcion == 0){
+        menu($guardar);
+    }elsif($opcion =~ "[0-9]" && $opcion == 0){
         system("clear");
         exit;
     }else{
         system("clear");
         print("-> Comando Invalido!\n");
-        menu($modo)
+        menu($guardar);
     }
 }
 
@@ -88,7 +102,7 @@ sub useReporto {
 
 sub filtrarMaestro {
     my ($pais,$sistema,$desde,$hasta) = @_;
-    my @maestro = $reporto->{'archivoMaestro'}();
+    my @maestro = $reporto->{'archivoMaestroPPI'}();
     if(defined($pais)){
         @maestro = $reporto->{'filtrarPorPaisDistinto'}(\@maestro, $pais);
     }
@@ -103,8 +117,9 @@ sub filtrarMaestro {
 
 sub recomendacion {
     print("-> Se ha elegido la opcion 'Recomendacion'\n");
-    my @procesados = $reporto->{'archivosProcesadosPais'}("A");
-    putsLdL(@procesados);
+    my @procesados = $reporto->{'archivosProcesadosPais'}($pais);
+    my @comparaciones = $reporto->{'comparar'}(\@maestroFiltrado,\@procesados);
+    return @comparaciones;
 }
 
 sub divergenciaEnPorcentaje {
