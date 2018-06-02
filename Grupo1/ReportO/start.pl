@@ -49,6 +49,13 @@ sub menu {
     print(" [9] Limpiar consola\n");
     print(" [0] Salir \n");
     print("-------------------------------------\n");
+    print("modo: $opcion | ") if(defined($opcion));
+    print("pais: $pais | ") if(defined($pais));
+    print("sistema: $sistema | ") if(defined($pais));
+    print("desde: $desde | ") if(defined($desde));
+    print("hasta: $hasta ") if(defined($hasta));
+    print("\n");
+    print("-------------------------------------\n");
     my $opcion = <STDIN>;
     if($opcion == 1){
         system("clear");
@@ -124,9 +131,19 @@ sub recomendacion {
 }
 
 sub divergenciaEnPorcentaje {
-    print("-> Se ha elegido la opcion 'Divergencia %'\n");
+    print("|-> Se ha elegido la opcion 'Divergencia %'\n");
+    print("   |-> Ingrese la referencia en %: ");
+    $referencia_porcentaje = <STDIN>;
+    my @comparados = $reporto->{'archivoComparadoPais'}($pais);
+    my @filtrado = $reporto->{'filtrarDivergenciaPorcentaje'}(\@comparados,$referencia_porcentaje);
+    putsLdL(@filtrado);
 }
 
 sub divergenciaEnPesos {
-     print("-> Se ha elegido la opcion 'Divergencia \$'\n");
+    print("|-> Se ha elegido la opcion 'Divergencia \$'\n");
+    print("   |-> Ingrese la referencia en \$: ");
+    $referencia_pesos = <STDIN>;
+    my @comparados = $reporto->{'archivoComparadoPais'}($pais);
+    my @filtrado = $reporto->{'filtrarDivergenciaPesos'}(\@comparados,$referencia_pesos);
+    putsLdL(@filtrado);
 }

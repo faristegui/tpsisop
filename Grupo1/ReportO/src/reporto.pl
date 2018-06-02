@@ -65,6 +65,47 @@ sub Reporto {
                 die "El directorio 'procesados' esta indefinido, chequee las variables de ambiente\n";
             }
         },
+        'archivoComparadoPais' => sub {
+            my ($pais) = @_;
+            my $comparado_nombre = "comparado.$pais";
+            my $reportes_path = $ENV{'REPORTES'} . "/$comparado_nombre";
+            if(defined($reportes_path) && $reportes_path ne ""){
+                if(-e $reportes_path){
+                    my @comparados = readCSV({'path' => $reportes_path, 'separador' => ';'});
+                    return @comparados;
+                }else{
+                    print("El archivo '$comparado_nombre' aun no existe, por favor corra al menos una recomendacion.\n");
+                    return ();
+                }
+            }else{
+                die "El directorio 'reportes' esta indefinido, chequee las variables de ambiente\n";
+            }
+        },
+        'filtrarDivergenciaPorcentaje' => sub {
+            my ($comparados,$referencia) = @_;
+            my @filtrado = ();
+            foreach my $comparado (@{$comparados}){
+                $diferencia = @$comparado[8];
+                $maestro = @$comparado[6];
+                $porcentaje_diferencia = $diferencia * (100 / $maestro);
+                if(abs($porcentaje_diferencia) > $referencia){
+                    push(@$comparado, $porcentaje_diferencia ."%");
+                    push(@filtrado,[@$comparado]);
+                }
+            }
+            return @filtrado;
+        },
+        'filtrarDivergenciaPesos' => sub {
+            my ($comparados,$referencia) = @_;
+            my @filtrado = ();
+            foreach my $comparado (@{$comparados}){
+                $diferencia = @$comparado[8];
+                if(abs($diferencia) > $referencia){
+                    push(@filtrado,[@$comparado]);
+                }
+            }
+            return @filtrado;
+        },
         'comparar' => sub {
             my @maestro = @{$_[0]};
             my @prestamos_pais = @{$_[1]};
