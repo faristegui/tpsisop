@@ -148,13 +148,37 @@ sub Reporto {
             }
             return @comparaciones;
         },
-        'escribirReporte' => sub {
+        'guardarRecomendacion' => sub {
             my ($comparaciones,$pais) = @_;
             my $nombre_reporte = "comparado.$pais";
             my $nuevo_reporte_path = $ENV{'REPORTES'} . "/$nombre_reporte";
             open(my $data, '>>', $nuevo_reporte_path ) or die "No se pudo escribir reporte: $nuevo_reporte_path'\n";
             foreach my $comparacion (@{$comparaciones}) {
                print $data join(";",@$comparacion) . "\n";    
+            }
+            close($data);
+            return $nombre_reporte;
+        },
+        'guardarDivergenciaPesos' => sub {
+            my ($filtrado) = @_;
+            my $fecha_hora = DateTime->now(time_zone=>'local');
+            my $nombre_reporte = "divergencia_pesos_$fecha_hora.div";
+            my $nuevo_reporte_path = $ENV{'REPORTES'} . "/$nombre_reporte";
+            open(my $data, '>>', $nuevo_reporte_path ) or die "No se pudo escribir reporte: $nuevo_reporte_path'\n";
+            foreach my $registro (@{$filtrado}) {
+               print $data join(";",@$registro) . "\n";    
+            }
+            close($data);
+            return $nombre_reporte;
+        },
+        'guardarDivergenciaPorcentaje' => sub {
+            my ($filtrado) = @_;
+            my $fecha_hora = DateTime->now(time_zone=>'local');
+            my $nombre_reporte = "divergencia_porcentaje_$fecha_hora.div";
+            my $nuevo_reporte_path = $ENV{'REPORTES'} . "/$nombre_reporte";
+            open(my $data, '>>', $nuevo_reporte_path ) or die "No se pudo escribir reporte: $nuevo_reporte_path'\n";
+            foreach my $registro (@{$filtrado}) {
+               print $data join(";",@$registro) . "\n";    
             }
             close($data);
             return $nombre_reporte;

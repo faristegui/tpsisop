@@ -62,7 +62,7 @@ sub menu {
         system("clear");
         @resultado = recomendacion();  
         if($guardar){
-            $resultado_archivo_nombre = $reporto->{'escribirReporte'}(\@resultado,$pais);
+            my $resultado_archivo_nombre = $reporto->{'guardarRecomendacion'}(\@resultado,$pais);
             print("El reporte ha sido guardado con nombre: $resultado_archivo_nombre\n");
         }else{
             putsLdL(@resultado);
@@ -70,11 +70,23 @@ sub menu {
         menu($guardar);
     }elsif($opcion == 2){
         system("clear");
-        divergenciaEnPorcentaje();
+        my @filtrado = divergenciaEnPorcentaje();
+        if($guardar){  
+            my $resultado_archivo_nombre = $reporto->{'guardarDivergenciaPorcentaje'}(\@filtrado);
+            print("El reporte ha sido guardado con nombre: $resultado_archivo_nombre\n");
+        }else{
+            putsLdL(@filtrado);
+        }
         menu($guardar);
     }elsif($opcion == 3){
         system("clear");
-        divergenciaEnPesos();
+        my @filtrado = divergenciaEnPesos();
+        if($guardar){  
+            my $resultado_archivo_nombre = $reporto->{'guardarDivergenciaPesos'}(\@filtrado);
+            print("El reporte ha sido guardado con nombre: $resultado_archivo_nombre\n");
+        }else{
+            putsLdL(@filtrado);
+        }
         menu($guardar);
     }elsif($opcion == 9){
         system("clear");
@@ -137,7 +149,7 @@ sub divergenciaEnPorcentaje {
     $referencia_porcentaje = <STDIN>;
     my @comparados = $reporto->{'archivoComparadoPais'}($pais);
     my @filtrado = $reporto->{'filtrarDivergenciaPorcentaje'}(\@comparados,$referencia_porcentaje);
-    putsLdL(@filtrado);
+    return @filtrado;
 }
 
 sub divergenciaEnPesos {
@@ -146,5 +158,5 @@ sub divergenciaEnPesos {
     $referencia_pesos = <STDIN>;
     my @comparados = $reporto->{'archivoComparadoPais'}($pais);
     my @filtrado = $reporto->{'filtrarDivergenciaPesos'}(\@comparados,$referencia_pesos);
-    putsLdL(@filtrado);
+    return @filtrado;
 }
