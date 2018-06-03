@@ -177,7 +177,7 @@ modoReparacion(){
 		log "Iniciado Modo reparación." "$carpeta"
 
 		#Archivos ejecutables
-		ejecutables=$(find "InstallFiles" -type f -iname "*.sh" -o -iname "*.pl")
+		ejecutables=$(find "InstallFiles" -type f -iname "*.sh")
 		while read -r line
 		do
 			cp "$line" "${carpetas[0]}"
@@ -317,27 +317,11 @@ instalacion()
 
 	echo -e "\nSu instalación está lista. ¿Confirma la instalación? (S/N) (Presione cualquier otra tecla para salir del instalador): "
 	read -n 1 confirma
-
 	if [ "$confirma" = "N" ] || [ "$confirma" = "n" ]
 	then
 		log "-Confirma Instalacion / Respuesta: NO / Se lanza nuevamente el instalador."
 		echo -e "\nInstalación cancelada...\n"
 		instalacion
-	fi
-
-	if [ "$confirma" = "S" ] || [ "$confirma" = "s" ]
-	then
-		log "Confirma Instalacion / Respuesta: SI"
-		crearDirectorios
-		moverArchivos
-		crearConfig
-		echo "Instalación finalizada."
-		log "Instalacion finalizada"
-	else
-		echo -e "¡¡ATENCION!!  La instalación ha sido cancelada. No se instalara el sistema.\n"		
-		log "Instalación cancelada por el usuario."
-		read -rsp $'\nPresione ENTER para cerrar el programa...\n'
-		exit 1
 	fi
 }
 
@@ -369,6 +353,21 @@ else
 		echo -e "\nModo reparacion finalizado correctamente.\n"
 	else
 		instalacion
+		if [ "$confirma" = "S" ] || [ "$confirma" = "s" ]
+		then
+			log "Confirma Instalacion / Respuesta: SI"
+			crearDirectorios
+			moverArchivos
+			crearConfig
+			echo "Instalación finalizada."
+			log "Instalacion finalizada"
+		else
+			echo -e "¡¡ATENCION!!  La instalación ha sido cancelada. No se instalara el sistema.\n"		
+			log "Instalación cancelada por el usuario."
+			read -rsp $'\nPresione ENTER para cerrar el programa...\n'
+			exit 1
+		fi
+
 		mv -f instalacion.config dirconf/instalacion.config
 		log "Movido Archivo Configuracion"
 		mv -f install.log $dirLogs/install.log
