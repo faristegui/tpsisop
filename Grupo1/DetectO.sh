@@ -17,6 +17,9 @@ fi
 LOGNAME=detecto.log
 export LOGNAME
 
+PID_INTERPRETE=0
+export PID_INTERPRETE
+
 # Si no existe el archivo de log lo inicializo
 if [ ! -f $LOGS/$LOGNAME ]
 then
@@ -27,22 +30,22 @@ fi
 
 if [ "${MAESTROS}" = "" ] 
 then
-	log EjecDem Demonio ERR "No se puede iniciar el demonio. El directorio de archivos maestros no esta informado."
+	logD EjecDem Demonio ERR "No se puede iniciar el demonio. El directorio de archivos maestros no esta informado."
 	return
 fi
 if [ "${NOVEDADES}" = "" ] 
 then
-	log EjecDem Demonio ERR "No se puede iniciar el demonio. El directorio de arribos no esta informado."
+	logD EjecDem Demonio ERR "No se puede iniciar el demonio. El directorio de arribos no esta informado."
 	return
 fi
 if [ "${ACEPTADOS}" = "" ]
 then
-	log EjecDem Demonio ERR "No se puede iniciar el demonio. El directorio de archivos aceptados no esta informado."
+	logD EjecDem Demonio ERR "No se puede iniciar el demonio. El directorio de archivos aceptados no esta informado."
 	return
 fi
 if [ "${RECHAZADOS}" = "" ]
 then
-	log EjecDem Demonio ERR "No se puede iniciar el demonio. El directorio de archivos rechazados no esta informado."
+	logD EjecDem Demonio ERR "No se puede iniciar el demonio. El directorio de archivos rechazados no esta informado."
 	return
 fi
 
@@ -53,7 +56,7 @@ fi
 #fi
 
 # 2-Grabo en el log que arranco
-log EjecDem Demonio INF "Se inicia el DetectO con pid $$."
+logD EjecDem Demonio INF "Se inicia el DetectO con pid $$."
 
 # Funcion para no pisar archivos al moverlos de carpeta
 function move() {
@@ -81,7 +84,7 @@ function validarNombre()
 	
 	match=$( cut -d- -f1,3 "$MAESTROS/p-s.mae" | grep "${paisistema}")
     	if [[ $match == "" ]]; then
-		log EjecDem Demonio INF "Archivo Rechazado: No existe el pais-sistema para $fbname." 
+		logD EjecDem Demonio INF "Archivo Rechazado: No existe el pais-sistema para $fbname." 
 		move "$NOVEDADES/$fbname" "$RECHAZADOS/$fbname"
 		return
 	fi
@@ -89,13 +92,13 @@ function validarNombre()
 	maskanio=$( echo $anio | grep '[0-9][0-9][0-9][0-9]')
 	if [[ $maskanio == "" ]];
 	then
-		log EjecDem Demonio INF "Archivo Rechazado: Anio invalido para $fbname."
+		logD EjecDem Demonio INF "Archivo Rechazado: Anio invalido para $fbname."
 		move "$NOVEDADES/$fbname" "$RECHAZADOS/$fbname" 
 		return
 	fi
 	if [ $anio -gt 2018 ];
 	then
-		log EjecDem Demonio INF "Archivo Rechazado: Anio invalido para $fbname."
+		logD EjecDem Demonio INF "Archivo Rechazado: Anio invalido para $fbname."
 		move "$NOVEDADES/$fbname" "$RECHAZADOS/$fbname" 
 		return
 	fi
@@ -103,13 +106,13 @@ function validarNombre()
 	maskmes=$( echo $mes | grep '[01][0-9]')
 	if [[ $maskmes == "" ]];
 	then
-		log EjecDem Demonio INF "Archivo Rechazado: Mes invalido para $fbname." 
+		logD EjecDem Demonio INF "Archivo Rechazado: Mes invalido para $fbname." 
 		move "$NOVEDADES/$fbname" "$RECHAZADOS/$fbname"
 		return
 	fi
 	if [ $mes -le 0 -o $mes -gt 12 ];
 	then
-		log EjecDem Demonio INF "Archivo Rechazado: Mes invalido para $fbname." 
+		logD EjecDem Demonio INF "Archivo Rechazado: Mes invalido para $fbname." 
 		move "$NOVEDADES/$fbname" "$RECHAZADOS/$fbname"
 		return
 	fi
@@ -118,13 +121,13 @@ function validarNombre()
 	# 7-Verifico archivo: que no este vacio y que sea de texto
 	if ! [ -s $1 ];
 	then
-		log EjecDem Demonio INF "Archivo Rechazado: Archivo vacio $fbname." 
+		logD EjecDem Demonio INF "Archivo Rechazado: Archivo vacio $fbname." 
 		move "$NOVEDADES/$fbname" "$RECHAZADOS/$fbname"
 		return
 	fi
 	# PASO TODAS LAS VALIDACIONES
 	# 9-Acepto archivo: mover a carpeta aceptados
-	log EjecDem Demonio INF "Archivo Aceptado: $fbname." 
+	logD EjecDem Demonio INF "Archivo Aceptado: $fbname." 
 	move "$NOVEDADES/$fbname" "$ACEPTADOS/$fbname"
 }
 
@@ -135,7 +138,7 @@ ciclo=1
 while [ true ]
 do
 
-	log EjecDem Demonio INF "Ciclo nro: $ciclo"
+	logD EjecDem Demonio INF "Ciclo nro: $ciclo"
 
 	# 5-Veo si hay novedades en el directorio de arribos
 	novedades=$(ls "${NOVEDADES}" -1 | wc -l)
@@ -154,13 +157,13 @@ do
 	if [ $aceptados \> 0 ]; 
 	then
 		# Si no esta corriendo lo ejecuto
-		if [ -z "$PID_INTERPRETE" ] 
+		if [ $PID_INTERPRETE -eq 0 ] 
 		then
-			source InterpretO.sh &
-			PID_INTERPRETE=$!
-			log EjecDem Demonio INF "Interprete Iniciado: $PID_INTERPRETE." 
+			export PID_INTERPRETE=1
+			source InterpretO.sh
+			logD EjecDem Demonio INF "Interprete Iniciado: $!." 
 		else
-			log EjecDem Demonio INF "Invocacion del Interprete pospuesta para el siguiente ciclo." 
+			logD EjecDem Demonio INF "Invocacion del Interprete pospuesta para el siguiente ciclo." 
 		fi
 	fi
 	

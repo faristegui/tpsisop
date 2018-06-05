@@ -5,7 +5,7 @@
 #PARAMETROS LOG
 #CAMPO, ORIGEN, TIPO, MENSAJE
 
-function log()
+function logD()
 {
 	# Si el archivo de log pesa mas de 200kb = 204800b se trunca y se dejan las ultimas 50 lineas 2048000
 	filesize=$(stat -c%s $LOGS/$LOGNAME)

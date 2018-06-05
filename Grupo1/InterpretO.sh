@@ -396,4 +396,4 @@ done
 #FIN RECORRIDO DE DIRECTORIO CON ARCHIVOS ACEPTADOS
 echo 'El interprete proceso todos los archivos que habia disponibles'
 #fi
-#PID_INTERPRETE=""
+export PID_INTERPRETE=0
