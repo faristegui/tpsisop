@@ -14,17 +14,6 @@ nombresSalida=("CTB_ESTADO" "PRES_ID" "MT_PRES" "MT_IMPAGO")
 nombresSalida+=("MT_INDE" "MT_INNODE" "MT_DEB" "MT_REST" "PRES_CLI_ID" "PRES_CLI")
  
 
-ambienteinicializado(){
-	
-	#if [ -z "$PID_DETECTO" ] 
-	#then
-	#	echo "El proceso DetectO no esta corriendo."
-	#	exit 1
-	#else
-		return 1
-	#fi
-}
-
 buscarIndice(){
 
 	CONT=0
@@ -61,7 +50,7 @@ formatearFecha(){
 		;;
 		'yymmdd8') nuevaLinea+=$separadorSalida${valorCampo:0:4}$separadorSalida${valorCampo:4:2}$separadorSalida${valorCampo:6:2}
 		;;
-		*) nuevaLinea+=$separadorSalida'hola'$separadorSalida'hola'$separadorSalida'hola'
+		*) nuevaLinea+=$separadorSalida'ERROR'$separadorSalida'ERROR'$separadorSalida'ERROR'
 		;;
 	esac
 
@@ -71,7 +60,7 @@ grabarFechaYusuario(){
 
 fecha=($(date "+%d/%m/%Y"))
 
-nuevaLinea+=$separadorSalida$fecha$separadorSalida'usuario01'
+nuevaLinea+=$separadorSalida$fecha$separadorSalida$USER
 
 }
 
@@ -162,6 +151,26 @@ fecha=($(date "+%Y-%m-%d"))
 
 if [ ! -d $salida'/'$fecha ]; then
 
+	mkdir $salida'/'$fecha	
+	
+fi
+
+mv $1 $salida'/'$fecha
+
+}
+
+chequeaProcesado(){
+
+if [ ! -d $salida ]; then
+
+	mkdir $directorioActual'/procesados'
+
+fi
+
+fecha=($(date "+%Y-%m-%d"))
+
+if [ ! -d $salida'/'$fecha ]; then
+
 	mkdir $salida'/'$fecha
 
 fi
@@ -170,90 +179,96 @@ if [ -f $salida'/'$fecha'/'$(basename $1) ]; then
 
     let colisiones=colisiones+1
 	mv $1 $1'-'$colisiones
+	log "El archivo $(basename $1) se encontraba duplicado en el directorio se renombro como $(basename $1)'-'$colisiones"
 
-if [ ! -d $salida'/'$fecha'/'$dirDup ]; then
+	if [ ! -d $salida'/'$fecha'/'$dirDup ]; then
 
-	mkdir $salida'/'$fecha'/'$dirDup
+		mkdir $salida'/'$fecha'/'$dirDup
 
-fi
+	fi
 
 	mv $1'-'$colisiones $salida'/'$fecha'/'$dirDup
-
-else
-	
-	mv $1 $salida'/'$fecha
+	return 1
 
 fi
+
+return 0
 
 }
 
 evaluarAlfaNum(){
 
-	campo="$1";
-
-	long=${#campo[*]}
-
-	posibles="\(([0-9]\|[a-z]\|[A-Z]\|' '\)*\)";
-
-	#es_val=$(echo "$campo" | sed "s/$posibles/Es valido/");
-
-	if [[ $es_val == 'Es valido' ]]; then
+	campo=$1
+	formatoAlfa=$2
+	long=$(echo "${#formatoAlfa}-1" | bc)
+	formatoAlfa=${formatoAlfa:1:$long}
+	cant=$(echo $formatoAlfa | sed "s/^\([0-9]*\)\./\1/")
+	cant=${cant::-1}
+	posibles="^.\{1,$cant\}"
+	alfa_val=$(echo "$campo" | sed "s/$posibles/Es valido/")
+	if [[ $alfa_val == 'Es valido' ]]; then
 		return 1;
 	else
-		return 1;
+		msg="error en el campo: $3"
+		return 0;
 	fi
 }
 
 evaluarNumero(){
 
-	campo="$1";
-
-	long=${#campo[*]}
-
-	posibles="\([0-9]\{1,\}\)";
-
-	#es_val=$(echo "$campo" | sed "s/$posibles/Es valido/");
+	campo=$1
+	cantEntera=$(echo $2 | sed "s/^commax\([0-9]*\)\.\([0-9]*\)*/\1/")
+	cantDecimal=$(echo $2 | sed "s/^commax\([0-9]*\)\.\([0-9]*\)*/\2/")
+	cantEntera=${cantEntera::-1}
+	cantDecimal=${cantDecimal::-1}
+	posibles="^\([0-9]\{1,$cantEntera\}$\|[0-9]\{1,$cantEntera\}$separadorDec[0-9]\{1,$cantDecimal\}\)$"
+	es_val=$(echo "$campo" | sed "s/$posibles/Es valido/")
 
 	if [[ $es_val == 'Es valido' ]]; then
-		return 1;
+		return 1
 	else
-		return 1;
+		msg="error en el campo: $3"
+		return 0
 	fi
-
 }
 
 evaluarFecha(){
-
 	valorFormato=$2
 	valorCampo=$1
-	campoAEvaluar=''
+
+	dias_29="\(0[1-9]\|[1-2][0-9]\)"
+	dias_30="\(0[1-9]\|[1-2][0-9]\|30\)"
+	dias_31="\(0[1-9]\|[1-2][0-9]\|3[0-1]\)"
+	mes_29="02"
+	mes_30="\(04\|06\|09\|11\)"
+	mes_31="\(01\|03\|05\|07\|08\|10\|12\)"
 
 	case "${valorFormato:0:7}" in
 
-		'ddmmyy1') campoAEvaluar+=${valorCampo:6:4}'-'${valorCampo:3:2}'-'${valorCampo:0:2}
+		'ddmmyy1') posibles="^\($dias_29.$mes_29.[0-9]\{4\}\|$dias_30.$mes_30.[0-9]\{4\}\|$dias_31.$mes_31.[0-9]\{4\}\)"
 		;;
-		'ddmmyy8') campoAEvaluar+=${valorCampo:4:4}'-'${valorCampo:2:2}'-'${valorCampo:0:2}
+		'ddmmyy8') posibles="^\(\($dias_29$mes_29[0-9]\{4\}\)\|\($dias_30$mes_30[0-9]\{4\}\)\|\($dias_31$mes_31[0-9]\{4\}\)\)"
 		;;
-		'yymmdd1') campoAEvaluar+=${valorCampo:0:4}'-'${valorCampo:5:2}'-'${valorCampo:8:2}
+		'yymmdd1') posibles="^\(\([0-9]\{4\}.$mes_29.$dias_29\)\|\([0-9]\{4\}.$mes_30.$dias_30\)\|\([0-9]\{4\}.$mes_31.$dias_31\)\)"
 		;;
-		'yymmdd8') campoAEvaluar+=${valorCampo:0:4}'-'${valorCampo:4:2}'-'${valorCampo:6:2}
+		'yymmdd8') posibles="^\(\([0-9]\{4\}$mes_29$dias_29\)\|\([0-9]\{4\}$mes_30$dias_30\)\|\([0-9]\{4\}$mes_31$dias_31\)\)"
 		;;
 		
 	esac
 
-	#meses_31="\(\(0[1-9]\|[1-2][0-9]\|3[0-1]\)-\(01\|03\|05\|07\|08\|10\|12\)\)";
-	#meses_30="\(\(0[1-9]\|[1-2][0-9]\|30\)-\(04\|05\|09\|11\)\)";
-	#meses_29="\(\(0[1-9]\|[1-2][0-9]\)-\02\)";
+	fecha_val=$(echo "$valorCampo" | sed "s/$posibles/Es valido/")
 
-	#val_mes="\($meses_29\|$meses_30\|$meses_31\)";
+	if [ ${#fecha_val} -eq 10 ]; then
 
-	#es_val=$(echo "$campoAEvaluar" | sed "s/$val_mes-[0-9][0-9][0-9][0-9]/Es valido/");
+		fecha_val=${fecha_val::-1}
 	
-	if [[ ${#campoAEvaluar} -eq 10 ]]; then
-		return 1;
-	else
-		return 0;
 	fi
+	if [[ $fecha_val == 'Es valido' ]]; then
+		return 1
+	else
+		msg="error en el campo: $3"
+		return 0
+	fi	
 }
 
 evaluarCampo(){
@@ -263,28 +278,24 @@ evaluarCampo(){
 	primerCaracter=${formatoCampo:0:1}
 	case "$primerCaracter" in
 	
-		'$') evaluarAlfaNum $1 $2 
+		'$') evaluarAlfaNum $1 $2 $3
 	    ;;
-		'c') evaluarNumero $1 $2 
+		'c') evaluarNumero $1 $2 $3
 	    ;;
-		*)  evaluarFecha $1 $2 
+		*)  evaluarFecha $1 $2 $3
 	    ;;
 	esac
 
 }
 
-ambienteinicializado
+#Chequea que el demonio este corriendo
 
-if [ $? -eq 1 ]; then
+#if [ -z "$PID_DETECTO" ] 
+#then
+#	echo "El proceso DetectO no esta corriendo, por lo que el interprete no puede ejecutarse"
+#else
 
-	echo "El ambiente se encuentra correctamente inicializado"
-
-else
-
-	echo "No se encuentra inicializado el ambiente"
-
-fi
-
+echo "El ambiente se encuentra correctamente inicializado"
 
 
 #INICIO RECORRIDO DE DIRECTORIO CON ARCHIVOS ACEPTADOS
@@ -296,6 +307,10 @@ do
     sistema=${codigos[1]};
 	archivo=$entrada'/'$i;
 
+	chequeaProcesado $archivo
+
+	if [ $? -eq 0 ];then
+
 	# INICIO - obtiene los separadores de campo y decimales
 	backIFS=$IFS
 	vec=()
@@ -304,8 +319,11 @@ do
 		IFS="-" read -ra vec <<< "$linea"
 	    if [[ "${vec[0]}" == $codigo_pais && ${vec[1]} == $sistema ]]; then
 
-	    	separador=${vec[2]};
-	    	separadorDec=${vec[3]};
+	    	separador=${vec[2]}
+	    	separadorDec=${vec[3]}
+			if [[ $separadorDec != "." ]]; then
+				separadorDec=${separadorDec::-1}
+			fi
 
 	    fi
 
@@ -349,7 +367,7 @@ do
 
 	    	#este if remplaza los campos vacios por 0 para evitar que se pasen mal por parametro
 	    	if [[ ${vec[CONTADOR]} == '' ]];then
-				vec[CONTADOR]=0;
+				vec[CONTADOR]='0'$separadorDec'0';
 			fi
 	        evaluarCampo ${vec[CONTADOR]} ${formatos[CONTADOR]} ${nombres_campos[CONTADOR]}
 	        campoCorrecto=$?
@@ -364,18 +382,18 @@ do
 
 	    else
 
-	    	log 'Archivo: '$i' - Registro nº'$contadorRegistros' rechazado por fecha'
-	    	echo 'registroRechazado'
+	    	log 'Archivo: '$i' - Registro nº'$contadorRegistros' rechazado por '$msg''
 
 	    fi
 
 	done < "$archivo"
 	IFS=$backIFS
-	
+
 	moverArchivo "$archivo"
+	fi
 	# FIN - recorrer archivo de prestamos
 done
 #FIN RECORRIDO DE DIRECTORIO CON ARCHIVOS ACEPTADOS
-#echo 'El interprete proceso todos los archivos que habia disponibles'
-#exit 1
-PID_INTERPRETE=""
+echo 'El interprete proceso todos los archivos que habia disponibles'
+#fi
+#PID_INTERPRETE=""
